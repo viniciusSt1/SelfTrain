@@ -30,8 +30,8 @@ const grays = {
 	gray7:"#2F2F2F",
 	gray8:"#222222",
 	gray9:"#1E1E1E",
+	gray10:"#656C72"
 }
-
 
 const styles = StyleSheet.create({
     center: {
@@ -44,7 +44,8 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		gap:20,
 		paddingHorizontal:20,
-		paddingTop:20
+		paddingTop:20,
+		flex:1
 	}
 });
 

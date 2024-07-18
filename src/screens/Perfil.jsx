@@ -1,5 +1,5 @@
 import { Button, Text, View} from "react-native";
-import styles from "./styles";
+import styles from "../styles/globalStyles";
 
 export default function Perfil({navigation}){
     return (

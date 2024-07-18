@@ -5,7 +5,7 @@ import Explorar from '../screens/Explorar';
 import Home from '../screens/Home';
 import Perfil from '../screens/Perfil';
 import Planejamento from '../screens/Planejamento';
-import Test from '../components/Test'
+import Treino from '../screens/Treino';
 
 const HomeStack = createNativeStackNavigator();
 export function HomeStackScreen() {
@@ -18,8 +18,8 @@ export function HomeStackScreen() {
                 name="HomeStack"
                 component={Home} />
             <HomeStack.Screen
-                name="Teste"
-                component={Test} />
+                name="Treino"
+                component={Treino} />
 
             {/*Outras telas dessa stack */}
         </HomeStack.Navigator>
