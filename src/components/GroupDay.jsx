@@ -27,7 +27,7 @@ const style = StyleSheet.create({
         width: "100%",
         borderRadius: 20,
         overflow: "hidden",
-        marginBottom: 15, // Adicionei um espaço entre os grupos
+        elevation:5
     },
     backgroundImage: (agrupamento) => {
         switch (agrupamento) {

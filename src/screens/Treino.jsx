@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, ScrollView, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { FontAwesome } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import styles, { colors, grays } from '../styles/globalStyles';
 
 export default function Treino({ route, navigation }) {
@@ -31,12 +31,11 @@ export default function Treino({ route, navigation }) {
         <ScrollView style={style.scrollView(isLightMode)}>
             <SafeAreaView style={styles.screen}>
                 <View style={style.header}>
-                    <FontAwesome 
-                        name="long-arrow-left" 
+                    <MaterialIcons 
+                        name="keyboard-backspace" 
                         size={45} 
                         color={isLightMode ? "black" : "white"} 
-                        style={style.icon}
-                        onPress={() => {navigation.goBack()}}
+                        onPress={() => {navigation.goBack()}} 
                     />
                     <Text style={[style.title, { color: isLightMode ? "black" : "white" }]}>{titulo}</Text>
                 </View>

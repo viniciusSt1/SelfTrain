@@ -38,14 +38,17 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+		backgroundColor:'red'
     },
+	background:(isLightMode) => ({
+		backgroundColor: isLightMode ? grays.background_light : grays.background_dark,
+		flex:1
+	}),
 	screen: {
-		display: 'flex',
-		flexDirection: 'column',
+		flex:1,
 		gap:20,
 		paddingHorizontal:20,
-		paddingTop:20,
-		flex:1
+		paddingVertical:20,
 	}
 });
 

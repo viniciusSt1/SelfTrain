@@ -28,7 +28,8 @@ const style = StyleSheet.create({
         paddingHorizontal:20,
         justifyContent:"space-between",
         backgroundColor: isLightMode ? "white" : grays.gray7,
-        borderRadius:20
+        borderRadius:20,
+        elevation:3
     }),
     icon:{
         
