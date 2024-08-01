@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, ScrollView, useColorScheme } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialIcons } from '@expo/vector-icons';
 import styles, { colors, grays } from '../styles/globalStyles';
+import HeaderBack from '../components/HeaderBack';
 
 export default function Treino({ route, navigation }) {
     const { titulo, agrupamento, exercicios } = route.params;
@@ -30,19 +30,22 @@ export default function Treino({ route, navigation }) {
     return (
         <ScrollView style={style.scrollView(isLightMode)}>
             <SafeAreaView style={styles.screen}>
-                <View style={style.header}>
-                    <MaterialIcons 
-                        name="keyboard-backspace" 
-                        size={45} 
-                        color={isLightMode ? "black" : "white"} 
-                        onPress={() => {navigation.goBack()}} 
-                    />
-                    <Text style={[style.title, { color: isLightMode ? "black" : "white" }]}>{titulo}</Text>
+                <HeaderBack titulo={titulo} navigation={navigation} />
+
+                <View style={style.subHeader}>
+                    <Image source={requireIcon(agrupamento)} style={style.iconImage} />
+                    <Text style={style.titleText(isLightMode)}>{agrupamento}</Text>
                 </View>
-                <Image source={requireIcon(agrupamento)} style={style.iconImage} />
+                
                 <View style={style.exercisesContainer}>
                     {exercicios.map((exercicio, index) => (
-                        <Text key={index} style={style.exerciseText}>{exercicio}</Text>
+                        <View style={style.exercicioBox(isLightMode)}>
+                            <Image 
+                                source={isLightMode ? require('../assets/icons/exercicio-light.png') : require('../assets/icons/exercicio-dark.png')}
+                                style={style.exercicioIcon}/>
+                            <Text style={style.exerciseText(isLightMode)}>{exercicio}</Text>
+                        </View>
+                        
                     ))}
                 </View>
             </SafeAreaView>
@@ -55,30 +58,41 @@ const style = StyleSheet.create({
         flex: 1,
         backgroundColor: isLightMode ? grays.background_light : grays.background_dark
     }),
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    icon: {
-        marginRight: 20,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
+    subHeader: {
+        flexDirection:"row",
+        gap:20,
+        justifyContent:"center",
+        alignItems:"center"
     },
     iconImage: {
-        width: 100,
-        height: 100,
-        resizeMode: 'contain',
-        alignSelf: 'center',
-        marginBottom: 20,
+        width: 70,
+        height: 70,
     },
+    titleText: (isLightMode) => ({
+        color: isLightMode ? "black" : "white",
+        fontSize:22,
+        fontFamily:"Poppins"
+    }),
     exercisesContainer: {
-        paddingHorizontal: 20,
+        gap:20
     },
-    exerciseText: {
+    exercicioBox: (isLightMode) => ({
+        flexDirection:"row",
+        paddingHorizontal:40,
+        gap:40,
+        borderStyle:'solid',
+        borderBottomWidth:1,
+        borderColor: isLightMode ? grays.gray3 : grays.gray7,
+        paddingBottom:5,
+        alignItems:'center'
+    }),
+    exercicioIcon:{
+        width:40,
+        height:40
+    },
+    exerciseText: (isLightMode) => ({
         fontSize: 18,
-        marginVertical: 5,
-    },
+        color: isLightMode ? 'black' : 'white',
+        fontFamily:"Poppins"
+    }),
 });

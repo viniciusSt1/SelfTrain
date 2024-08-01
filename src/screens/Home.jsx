@@ -1,14 +1,14 @@
 import { Button, ScrollView, StyleSheet, Text, View, useColorScheme, ImageBackground, Pressable } from "react-native";
 import styles from "../styles/globalStyles";
 import { colors, grays } from "../styles/globalStyles";
-import GroupDay from "../components/GroupDay";
+import TreinoDay from "../components/TreinoDay";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from '@expo/vector-icons';
-import BoxGroupsDay from "../components/BoxGroupsDay";
+import BoxTreinosDay from "../components/BoxTreinosDay";
 import If from "../components/If";
 
 export default function Home({ route, navigation }) {
-    const treino = true //treino de hoje, deve vir de algum lugar
+    const treinos = true //treinos de hoje, deve vir de algum lugar
 
     const isLightMode = useColorScheme() === "light"
 
@@ -50,7 +50,7 @@ export default function Home({ route, navigation }) {
 
     let objday = getDate()
     
-    return treino ? (
+    return treinos ? (
         <SafeAreaView style={styles.background(isLightMode)}>
             <ScrollView>
                 <View style={styles.screen}>
@@ -60,22 +60,25 @@ export default function Home({ route, navigation }) {
                         <Text style={style.dataText(isLightMode)}>{objday.day} {objday.dd}/{objday.mm}/{objday.aaaa}</Text>
                     </View>
 
-                    <GroupDay navigation={navigation} agrupamento={"Perna"} dia={19} musculos={["Quadriceps", "Panturrilha", "Gluteos"]}
+                    <TreinoDay navigation={navigation} agrupamento={"Perna"} dia={19} musculos={["Quadriceps", "Panturrilha", "Gluteos"]}
                         onPress={() => navigation.navigate("Treino", { agrupamento: "Perna", titulo: "Dia 19", exercicios: ["agachamento", "ex2", "ex3"] })}
                     />
 
-                    <GroupDay navigation={navigation} agrupamento={"Abdomen"} dia={19} musculos={["Superior", "Lateral", "Obliquo"]} />
-                    <GroupDay navigation={navigation} agrupamento={"Costas"} dia={19} musculos={["Ombro", "Dorsal", "Clavicula"]} />
-                    <GroupDay navigation={navigation} agrupamento={"Tríceps"} dia={19} musculos={["g1", "g2", "g3"]} />
-                    <GroupDay navigation={navigation} agrupamento={"Bíceps"} dia={19} musculos={["g1", "g2", "g3"]} />
-                    <GroupDay navigation={navigation} agrupamento={"Peito"} dia={19} musculos={["Superior", "Medio", "Inferior"]} />
+                    <TreinoDay navigation={navigation} agrupamento={"Abdomen"} dia={19} musculos={["Superior", "Lateral", "Obliquo"]} />
+                    <TreinoDay navigation={navigation} agrupamento={"Costas"} dia={19} musculos={["Ombro", "Dorsal", "Clavicula"]} />
+                    <TreinoDay navigation={navigation} agrupamento={"Tríceps"} dia={19} musculos={["g1", "g2", "g3"]} />
+                    <TreinoDay navigation={navigation} agrupamento={"Bíceps"} dia={19} musculos={["g1", "g2", "g3"]} />
+                    <TreinoDay navigation={navigation} agrupamento={"Peito"} dia={19} musculos={["Superior", "Medio", "Inferior"]} />
 
                     <Text style={style.subtitle(isLightMode)}>Próximos Treinos</Text>
 
-                    <BoxGroupsDay navigation={navigation} agrupamentos={["Peito", "Costas"]} dia={20} objday={objday} isLightMode={isLightMode} />
-                    <BoxGroupsDay navigation={navigation} agrupamentos={["Perna", "Abdomen"]} dia={21} objday={objday} isLightMode={isLightMode} />
-                    <BoxGroupsDay navigation={navigation} agrupamentos={["Bíceps", "Tríceps"]} dia={22} objday={objday} isLightMode={isLightMode} />
-                    <BoxGroupsDay navigation={navigation} agrupamentos={["Peito", "Costas"]} dia={23} objday={objday} isLightMode={isLightMode} />
+                    <BoxTreinosDay 
+                        navigation={navigation} agrupamentos={["Peito", "Costas"]} dia={20} objday={objday} isLightMode={isLightMode} 
+                        onPress={() => navigation.navigate("Treinos", {objday:objday, agrupamentos:["Peito", "Costas"]})}/>
+                    
+                    <BoxTreinosDay  navigation={navigation} agrupamentos={["Perna", "Abdomen"]} dia={21} objday={objday} isLightMode={isLightMode} />
+                    <BoxTreinosDay  navigation={navigation} agrupamentos={["Bíceps", "Tríceps"]} dia={22} objday={objday} isLightMode={isLightMode} />
+                    <BoxTreinosDay  navigation={navigation} agrupamentos={["Peito", "Costas"]} dia={23} objday={objday} isLightMode={isLightMode} />
                 </View>
 
             </ScrollView>

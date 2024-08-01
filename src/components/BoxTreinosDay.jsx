@@ -1,10 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
 import { colors, grays } from '../styles/globalStyles';
 
-export default function BoxGroupsDay({ navigation, agrupamentos, dia, objday, isLightMode }) {
+export default function BoxGroupsDay({ navigation, agrupamentos, dia, objday, onPress, isLightMode }) {
     return (
-        <View style={style.container(isLightMode)}>
+        <Pressable style={style.container(isLightMode)} onPress={onPress}>
             <Image 
                 source={isLightMode ? require("../assets/icons/waitExercicio-light.png") : require("../assets/icons/waitExercicio-dark.png")}
                 style={style.icon}
@@ -15,7 +15,7 @@ export default function BoxGroupsDay({ navigation, agrupamentos, dia, objday, is
                 <Text style={style.boxtextdata(isLightMode)}>{objday.day} {objday.dd}/{objday.mm}/{objday.aaaa}</Text>
                 <Text style={style.boxtextagrupamentos}>{agrupamentos.join(" + ")}</Text>
             </View>
-        </View>
+        </Pressable>
     );
 }
 

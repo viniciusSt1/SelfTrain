@@ -6,22 +6,34 @@ import Home from '../screens/Home';
 import Perfil from '../screens/Perfil';
 import Planejamento from '../screens/Planejamento';
 import Treino from '../screens/Treino';
+import Treinos from '../screens/Treinos'
+import Exercicio from '../screens/Exercicio'
+import Question from '../screens/Question';
+import EditarPerfil from '../screens/EditarPerfil'
+import EditarMedidas from '../screens/EditarMedidas'
 
 const HomeStack = createNativeStackNavigator();
 export function HomeStackScreen() {
     return (
         <HomeStack.Navigator 
-            initialRouteName="HomeStack"
+            initialRouteName="Home"
             screenOptions={{headerShown: false}}
         >
             <HomeStack.Screen
-                name="HomeStack"
+                name="Home"
                 component={Home} />
+            <HomeStack.Screen
+                name="Question"
+                component={Question} />
+            <HomeStack.Screen
+                name="Treinos" 
+                component={Treinos} />    
             <HomeStack.Screen
                 name="Treino"
                 component={Treino} />
-
-            {/*Outras telas dessa stack */}
+            <HomeStack.Screen
+                name="Exercicio"
+                component={Exercicio} />
         </HomeStack.Navigator>
     );
 }
@@ -30,14 +42,18 @@ const ExplorarStack = createNativeStackNavigator();
 export function ExplorarStackScreen() {
     return (
         <ExplorarStack.Navigator 
-            initialRouteName="ExplorarStack"
+            initialRouteName="Explorar"
             screenOptions={{headerShown: false}}
         >
             <ExplorarStack.Screen 
-                name="ExplorarStack" 
+                name="Explorar" 
                 component={Explorar} />
-
-            {/*Outras telas dessa stack */}
+            <ExplorarStack.Screen
+                name="Treino"
+                component={Treino} />
+            <ExplorarStack.Screen
+                name="Exercicio"
+                component={Exercicio} />
         </ExplorarStack.Navigator>
     );
 }
@@ -46,14 +62,21 @@ const PlanejamentoStack = createNativeStackNavigator();
 export function PlanejamentoStackScreen() {
     return (
         <PlanejamentoStack.Navigator 
-            initialRouteName="PlanejamentoStack"
+            initialRouteName="Planejamento"
             screenOptions={{headerShown: false}}
         >
             <PlanejamentoStack.Screen 
-                name="PlanejamentoStack" 
+                name="Planejamento" 
                 component={Planejamento} />
-            
-            {/*Outras telas dessa stack */}
+            <PlanejamentoStack.Screen
+                name="Treinos" 
+                component={Treinos} />    
+            <PlanejamentoStack.Screen
+                name="Treino"
+                component={Treino} />
+            <PlanejamentoStack.Screen
+                name="Exercicio"
+                component={Exercicio} />
         </PlanejamentoStack.Navigator>
     );
 }
@@ -62,14 +85,15 @@ const CorpoStack = createNativeStackNavigator();
 export function CorpoStackScreen() {
     return (
         <CorpoStack.Navigator 
-            initialRouteName="CorpoStack"
+            initialRouteName="Corpo"
             screenOptions={{headerShown: false}}
         >
             <CorpoStack.Screen 
-                name="CorpoStack" 
+                name="Corpo" 
                 component={Corpo} />
-            
-            {/*Outras telas dessa stack */}
+            <CorpoStack.Screen
+                name="EditarMedidas"
+                component={EditarMedidas} />
         </CorpoStack.Navigator>
     );
 }
@@ -78,14 +102,19 @@ const PerfilStack = createNativeStackNavigator();
 export function PerfilStackScreen() {
     return (
         <PerfilStack.Navigator 
-            initialRouteName="PerfilStack"
+            initialRouteName="Perfil"
             screenOptions={{headerShown: false}}
         >
             <PerfilStack.Screen 
-                name="PerfilStack" 
+                name="Perfil" 
                 component={Perfil} />
+            <PerfilStack.Screen 
+                name="EditarPerfil" 
+                component={EditarPerfil} />
+            <PerfilStack.Screen 
+                name="EditarMedidas" 
+                component={EditarMedidas} />
 
-            {/*Outras telas dessa stack */}
         </PerfilStack.Navigator>
     );
 }
