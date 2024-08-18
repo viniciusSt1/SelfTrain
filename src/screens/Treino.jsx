@@ -39,7 +39,7 @@ export default function Treino({ route, navigation }) {
                 
                 <View style={style.exercisesContainer}>
                     {exercicios.map((exercicio, index) => (
-                        <View style={style.exercicioBox(isLightMode)}>
+                        <View style={style.exercicioBox(isLightMode)} key={index}>
                             <Image 
                                 source={isLightMode ? require('../assets/icons/exercicio-light.png') : require('../assets/icons/exercicio-dark.png')}
                                 style={style.exercicioIcon}/>

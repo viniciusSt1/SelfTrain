@@ -1,11 +1,34 @@
-import React from 'react';
-import { Pressable, Text, TextInput, useColorScheme, View, StyleSheet } from "react-native";
+import React, { useState } from 'react';
+import { Pressable, Text, TextInput, useColorScheme, View, StyleSheet, Alert} from "react-native";
 import { MaterialIcons, FontAwesome5, AntDesign } from '@expo/vector-icons';
 import { SafeAreaView } from "react-native-safe-area-context";
 import styles, {colors,grays} from '../styles/globalStyles';
+import auth from '@react-native-firebase/auth';
 
 export default function Login({ navigation }) {
     const isLightMode = useColorScheme() === 'light';
+
+    const [email, setEmail] = useState('');
+    const [senha, setSenha] = useState('');
+
+    function login_form(){
+        if (email === '' || senha === '') {
+            Alert.alert('Erro', 'Por favor, preencha todos os campos.');
+            return;
+        }
+
+        auth()
+        .signInWithEmailAndPassword(email, senha)
+        .then(() => {
+            console.log('Login efetuado com sucesso');
+            //navigation.navigate("App")
+        })
+        .catch(error => {
+            console.log('Erro ao tentar logar');
+
+            console.error(error);
+        });
+    }
 
     return (
         <SafeAreaView style={[styles.center,styles.background(isLightMode)]}>
@@ -24,14 +47,18 @@ export default function Login({ navigation }) {
                 placeholder="Email"
                 placeholderTextColor={grays.gray4}
                 style={style.input}
+                value={email}
+                onChangeText={setEmail}
             />
             <TextInput
                 placeholder="Senha"
                 placeholderTextColor={grays.gray4}
                 secureTextEntry
                 style={style.input}
+                value={senha}
+                onChangeText={setSenha}
             />
-            <Pressable style={style.loginButton} onPress={() => navigation.navigate("App")}>
+            <Pressable style={style.loginButton} onPress={() => login_form()}>
                 <Text style={style.loginButtonText}>Login</Text>
             </Pressable>
             <View style={style.linksContainer}>

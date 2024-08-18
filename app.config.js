@@ -1,4 +1,4 @@
-{
+export default {
   "expo": {
     "name": "SelfTrain",
     "slug": "SelfTrain",
@@ -15,7 +15,7 @@
       "supportsTablet": true
     },
     "android": {
-      "googleServicesFile": "./google-services.json",
+      "googleServicesFile": process.env.GOOGLE_SERVICES_JSON,
       "package": "com.company.selftrain",
       "versionCode": 1,
       "adaptiveIcon": {
@@ -38,6 +38,11 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "81f7c50b-8a9f-4521-84db-b455088ca3ac"
+      }
+    }
   }
 }

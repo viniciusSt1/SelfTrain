@@ -1,8 +1,9 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from 'expo-font';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
+import UserContext from '../contexts/UserContext';
 
 import Inicio from '../screens/Inicio';
 import Login from '../screens/Login';
@@ -11,6 +12,8 @@ import TabRoutes from './tab.routes';
 
 const InicioStack = createNativeStackNavigator();
 export default function Routes() {
+    const { user } = useContext(UserContext)
+
     // Configurando fontes do aplicativo
     const [loaded, error] = useFonts({
         'Actor': require('../assets/fonts/Actor-Regular.ttf'),
@@ -31,7 +34,11 @@ export default function Routes() {
     if (!loaded && !error)
         return null;
 
-    return (
+    return user ? (
+        <NavigationContainer>
+            <TabRoutes />
+        </NavigationContainer>
+    ) : (
         <NavigationContainer>
             <InicioStack.Navigator
                 initialRouteName="InicioStack"
@@ -48,10 +55,6 @@ export default function Routes() {
                 <InicioStack.Screen
                     name="Cadastro"
                     component={Cadastro}
-                />
-                <InicioStack.Screen
-                    name="App"
-                    component={TabRoutes}
                 />
             </InicioStack.Navigator >
         </NavigationContainer>

@@ -5,10 +5,24 @@ import TreinoDay from "../components/TreinoDay";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from '@expo/vector-icons';
 import BoxTreinosDay from "../components/BoxTreinosDay";
-import If from "../components/If";
+import UserContext from "../contexts/UserContext";
+import { useContext, useEffect, useState } from "react";
 
 export default function Home({ route, navigation }) {
     const treinos = true //treinos de hoje, deve vir de algum lugar
+    //var users = [];
+    //const { user } = useContext(UserContext)
+
+    /*
+    async function getusers() {
+        const snapshot = await firestore().collection('users').get();
+        users = snapshot.docs.map(doc => doc.data()); // Extrair os dados dos documentos
+    }
+    
+    getusers().then(() => {
+        console.warn(users); // Agora users conterá os dados da coleção
+    });
+    */
 
     const isLightMode = useColorScheme() === "light"
 
@@ -54,7 +68,7 @@ export default function Home({ route, navigation }) {
         <SafeAreaView style={styles.background(isLightMode)}>
             <ScrollView>
                 <View style={styles.screen}>
-                    <Text style={style.header(isLightMode)}>Treino de Hoje:</Text>
+                    <Text style={style.header(isLightMode)}>Treino de Hoje: </Text>
                     <View style={style.data}>
                         <Ionicons name="calendar-sharp" size={35} color={isLightMode ? "black" : "white"} />
                         <Text style={style.dataText(isLightMode)}>{objday.day} {objday.dd}/{objday.mm}/{objday.aaaa}</Text>
