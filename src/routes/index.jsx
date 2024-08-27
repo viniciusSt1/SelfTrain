@@ -18,11 +18,11 @@ export default function Routes() {
     const [loaded, error] = useFonts({
         'Actor': require('../assets/fonts/Actor-Regular.ttf'),
         'Inter': require('../assets/fonts/Inter-Regular.ttf'),
-        'Poppins': require('../assets/fonts/Poppins-Regular.ttf'),
         'RobotoCondensed': require('../assets/fonts/RobotoCondensed-Medium.ttf'),
         'Rubik': require('../assets/fonts/Rubik-Regular.ttf'),
         'Tauri': require('../assets/fonts/Tauri-Regular.ttf'),
         'Timmana': require('../assets/fonts/Timmana-Regular.ttf'),
+        'Outfit': require('../assets/fonts/Outfit-Regular.ttf'),
     });
 
     useEffect(() => {

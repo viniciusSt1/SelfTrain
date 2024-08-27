@@ -49,7 +49,12 @@ const styles = StyleSheet.create({
 		gap:20,
 		paddingHorizontal:20,
 		paddingVertical:20,
-	}
+	},
+	header: (isLightMode) => ({
+        color: isLightMode ? "black" : "white",
+        fontFamily: 'Outfit',
+        fontSize: 26
+    }),
 });
 
 export { colors, grays }

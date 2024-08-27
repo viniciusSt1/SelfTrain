@@ -26,11 +26,11 @@ const style = StyleSheet.create({
         //backgroundColor:'red'
     },
     title:(isLightMode) => ({
-        fontSize:24,
+        fontSize:26,
         color : isLightMode ? "black" : "white",
-        fontFamily:"Poppins",
+        fontFamily:"Outfit",
         justifyContent:'center',
-        marginBottom:-6,
+        //marginBottom:-6,
         //backgroundColor:'blue'
     }),
 })

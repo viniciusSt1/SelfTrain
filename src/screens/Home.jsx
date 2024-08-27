@@ -26,73 +26,52 @@ export default function Home({ route, navigation }) {
 
     const isLightMode = useColorScheme() === "light"
 
-    function getDate() {
-        const data = new Date();
-        let day;
-
-        const n = data.getDay();
+    function getDate(n) {
         switch (n) {
             case 0:
-                day = "Domingo";
-                break;
+                return "Domingo";
             case 1:
-                day = "Segunda-feira";
-                break;
+                return "Segunda-feira";
             case 2:
-                day = "Terça-feira";
-                break;
+                return "Terça-feira";
             case 3:
-                day = "Quarta-feira";
-                break;
+                return "Quarta-feira";
             case 4:
                 day = "Quinta-feira";
-                break;
             case 5:
-                day = "Sexta-feira";
-                break;
+                return "Sexta-feira";
             case 6:
-                day = "Sábado";
-                break;
+                return "Sábado";
+
         }
-
-        const dd = data.getDate().toString().padStart(2, '0');
-        const mm = (data.getMonth() + 1).toString().padStart(2, '0'); // Meses são indexados de 0 a 11
-        const aaaa = data.getFullYear();
-
-        return { day, dd, mm, aaaa };
     }
 
-    let objday = getDate()
+    let data_atual = new Date().toLocaleDateString('pt-BR')
+    let dia_atual = getDate(new Date().getDay())
     
     return treinos ? (
         <SafeAreaView style={styles.background(isLightMode)}>
             <ScrollView>
                 <View style={styles.screen}>
-                    <Text style={style.header(isLightMode)}>Treino de Hoje: </Text>
+                    <Text style={styles.header(isLightMode)}>Treino de Hoje: </Text>
                     <View style={style.data}>
-                        <Ionicons name="calendar-sharp" size={35} color={isLightMode ? "black" : "white"} />
-                        <Text style={style.dataText(isLightMode)}>{objday.day} {objday.dd}/{objday.mm}/{objday.aaaa}</Text>
+                        <Ionicons name="calendar-sharp" size={32} color={isLightMode ? "black" : "white"} />
+                        <Text style={style.dataText(isLightMode)}>{dia_atual} {data_atual}</Text>
                     </View>
 
-                    <TreinoDay navigation={navigation} agrupamento={"Perna"} dia={19} musculos={["Quadriceps", "Panturrilha", "Gluteos"]}
-                        onPress={() => navigation.navigate("Treino", { agrupamento: "Perna", titulo: "Dia 19", exercicios: ["agachamento", "ex2", "ex3"] })}
+                    <TreinoDay agrupamentos={["Pernas","Costas"]} numero={19} tempo="70 min" qntExerc={12}
+                        onPress={() => navigation.navigate("Treino", { agrupamentos: ["Pernas","Costas"], titulo: "19º treino", exercicios_agrup: [["agachamento", "ex2", "ex3"],["barra1","barra2","barra3","barra4",'b','bb','bbb']] })}
                     />
-
-                    <TreinoDay navigation={navigation} agrupamento={"Abdomen"} dia={19} musculos={["Superior", "Lateral", "Obliquo"]} />
-                    <TreinoDay navigation={navigation} agrupamento={"Costas"} dia={19} musculos={["Ombro", "Dorsal", "Clavicula"]} />
-                    <TreinoDay navigation={navigation} agrupamento={"Tríceps"} dia={19} musculos={["g1", "g2", "g3"]} />
-                    <TreinoDay navigation={navigation} agrupamento={"Bíceps"} dia={19} musculos={["g1", "g2", "g3"]} />
-                    <TreinoDay navigation={navigation} agrupamento={"Peito"} dia={19} musculos={["Superior", "Medio", "Inferior"]} />
 
                     <Text style={style.subtitle(isLightMode)}>Próximos Treinos</Text>
 
                     <BoxTreinosDay 
-                        navigation={navigation} agrupamentos={["Peito", "Costas"]} dia={20} objday={objday} isLightMode={isLightMode} 
-                        onPress={() => navigation.navigate("Treinos", {objday:objday, agrupamentos:["Peito", "Costas"]})}/>
+                        navigation={navigation} agrupamentos={["Peitoral", "Costas"]} numero={20} data={data_atual} dia="Sábado" isLightMode={isLightMode} 
+                        onPress={() => navigation.navigate("Treino_agroups", {data:data_atual, agrupamentos:["Peitoral", "Costas"]})}/>
                     
-                    <BoxTreinosDay  navigation={navigation} agrupamentos={["Perna", "Abdomen"]} dia={21} objday={objday} isLightMode={isLightMode} />
-                    <BoxTreinosDay  navigation={navigation} agrupamentos={["Bíceps", "Tríceps"]} dia={22} objday={objday} isLightMode={isLightMode} />
-                    <BoxTreinosDay  navigation={navigation} agrupamentos={["Peito", "Costas"]} dia={23} objday={objday} isLightMode={isLightMode} />
+                    <BoxTreinosDay  navigation={navigation} agrupamentos={["Perna", "Abdomen"]} numero={21} data={data_atual} dia="Segunda-feira" isLightMode={isLightMode} />
+                    <BoxTreinosDay  navigation={navigation} agrupamentos={["Bíceps", "Tríceps"]} numero={22} data={data_atual} dia="Quarta-feira" isLightMode={isLightMode} />
+                    <BoxTreinosDay  navigation={navigation} agrupamentos={["Peitoral", "Costas"]} numero={23} data={data_atual} dia="Sexta feira" isLightMode={isLightMode} />
                 </View>
 
             </ScrollView>
@@ -100,7 +79,7 @@ export default function Home({ route, navigation }) {
     ) : (
         <SafeAreaView style={styles.background(isLightMode)}>
             <View style={styles.screen}>
-                <Text style={style.header(isLightMode)}>Não perca seu treino de hoje!</Text>
+                <Text style={styles.header(isLightMode)}>Não perca seu treino de hoje!</Text>
                 < ImageBackground
                     source = { require('../assets/imgs/empty.jpg') }
                     style = { style.empty }
@@ -110,7 +89,7 @@ export default function Home({ route, navigation }) {
                         <Text style={style.emptyText}>Ainda não há treinos por aqui ...</Text>
                     </View>
                 </ImageBackground >
-                <Pressable style={style.gerarTreinoBox}>
+                <Pressable style={style.gerarTreinoBox} onPress={() => navigation.navigate("Question")}>
                     <Text style={style.gerarTreinoText}>Gerar treino agora</Text>
                 </Pressable>
             </View>
@@ -119,11 +98,6 @@ export default function Home({ route, navigation }) {
 }
 
 const style = StyleSheet.create({
-    header: (isLightMode) => ({
-        color: isLightMode ? "black" : "white",
-        fontFamily: 'Poppins',
-        fontSize: 26
-    }),
     data: {
         width: "100%",
         flexDirection: "row",
@@ -136,7 +110,7 @@ const style = StyleSheet.create({
         fontSize: 18
     }),
     subtitle: (isLightMode) => ({
-        fontFamily: "Poppins",
+        fontFamily: "Outfit",
         color: isLightMode ? "black" : "white",
         fontSize: 22
     }),

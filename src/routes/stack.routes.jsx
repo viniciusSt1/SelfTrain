@@ -6,11 +6,12 @@ import Home from '../screens/Home';
 import Perfil from '../screens/Perfil';
 import Planejamento from '../screens/Planejamento';
 import Treino from '../screens/Treino';
-import Treinos from '../screens/Treinos'
+import Treinos_agroups from '../screens/Treino_agroups'
 import Exercicio from '../screens/Exercicio'
-import Question from '../screens/Question';
+import Questionario from '../screens/Questionario';
 import EditarPerfil from '../screens/EditarPerfil'
 import EditarMedidas from '../screens/EditarMedidas'
+import Treino_agroups from '../screens/Treino_agroups';
 
 const HomeStack = createNativeStackNavigator();
 export function HomeStackScreen() {
@@ -24,13 +25,14 @@ export function HomeStackScreen() {
                 component={Home} />
             <HomeStack.Screen
                 name="Question"
-                component={Question} />
+                component={Questionario}
+                options={{ tabBarStyle: { display: 'none' } }} />
             <HomeStack.Screen
-                name="Treinos" 
-                component={Treinos} />    
+                name="Treino" 
+                component={Treino} />    
             <HomeStack.Screen
-                name="Treino"
-                component={Treino} />
+                name="Treino_agroups"
+                component={Treino_agroups} />
             <HomeStack.Screen
                 name="Exercicio"
                 component={Exercicio} />
@@ -68,9 +70,9 @@ export function PlanejamentoStackScreen() {
             <PlanejamentoStack.Screen 
                 name="Planejamento" 
                 component={Planejamento} />
-            <PlanejamentoStack.Screen
-                name="Treinos" 
-                component={Treinos} />    
+            <HomeStack.Screen
+                name="Treino_agroups"
+                component={Treino_agroups} />  
             <PlanejamentoStack.Screen
                 name="Treino"
                 component={Treino} />

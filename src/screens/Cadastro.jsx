@@ -1,9 +1,10 @@
 import { useState }from 'react';
-import { Pressable, Text, TextInput, useColorScheme, View, StyleSheet } from "react-native";
+import { Pressable, Text, TextInput, useColorScheme, View, StyleSheet, Alert } from "react-native";
 import { MaterialIcons, FontAwesome5, AntDesign } from '@expo/vector-icons';
 import { SafeAreaView } from "react-native-safe-area-context";
 import styles, {colors,grays} from '../styles/globalStyles';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 export default function Cadastro({ navigation }) {
     const isLightMode = useColorScheme() === 'light';
@@ -13,11 +14,34 @@ export default function Cadastro({ navigation }) {
     const [senha, setSenha] = useState('');
 
     function cadastrar(nome,email,senha){
+        if (email === '' || senha === '') {
+            Alert.alert('Erro', 'Por favor, preencha todos os campos.');
+            return;
+        }
+
         auth()
         .createUserWithEmailAndPassword(email, senha)
-        .then(() => {
+        .then((userCredential) => {
+            const user = userCredential.user
             console.log('User account created & signed in!');
-            //navigation.navigate("App")
+            console.log('UID:', user.uid);
+            firestore()
+                    .collection('users')
+                    .doc(user.uid)
+                    .set({
+                        nome: nome,
+                        email: email,
+                        createdAt: firestore.FieldValue.serverTimestamp(),
+                        treinos: [{exercicios:[]}]
+                    })
+                    .then(() => {
+                        console.log('User data added to Firestore!');
+                        
+                        //navigation.navigate("App");
+                    })
+                    .catch(error => {
+                        console.error('Error adding user data to Firestore:', error);
+                    });
         })
         .catch(error => {
             if (error.code === 'auth/email-already-in-use') 
@@ -81,7 +105,7 @@ const style = StyleSheet.create({
     },
     logoContainer: {
         alignItems:'center',
-        marginTop:"-50%"
+        //marginTop:"-50%"
     },
     logoText: (isLightMode) => ({
         fontSize: 50,

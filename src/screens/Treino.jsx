@@ -1,68 +1,65 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, ScrollView, useColorScheme } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, useColorScheme, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles, { colors, grays } from '../styles/globalStyles';
 import HeaderBack from '../components/HeaderBack';
+import { requireIcon } from '../utils/agrupamentos';
 
 export default function Treino({ route, navigation }) {
-    const { titulo, agrupamento, exercicios } = route.params;
+    const { titulo, agrupamentos, exercicios_agrup, startButton } = route.params;
     const isLightMode = useColorScheme() === 'light';
 
-    function requireIcon(agrupamento) {
-        switch (agrupamento) {
-            case 'Abdomen':
-                return require('../assets/icons/abdomen.png'); 
-            case 'Bíceps':
-                return require('../assets/icons/biceps.png');
-            case 'Costas':
-                return require('../assets/icons/back.png'); 
-            case 'Perna':
-                return require('../assets/icons/leg.png'); 
-            case 'Peito':
-                return require('../assets/icons/chest.png'); 
-            case 'Tríceps':
-                return require('../assets/icons/triceps.png'); 
-            default:
-                return null;
-        }
-    }
-
     return (
-        <ScrollView style={style.scrollView(isLightMode)}>
-            <SafeAreaView style={styles.screen}>
-                <HeaderBack titulo={titulo} navigation={navigation} />
+        <>
+            <ScrollView style={style.scrollView(isLightMode)}>
+                <SafeAreaView style={styles.screen}>
+                    <HeaderBack titulo={titulo} navigation={navigation} />
 
-                <View style={style.subHeader}>
-                    <Image source={requireIcon(agrupamento)} style={style.iconImage} />
-                    <Text style={style.titleText(isLightMode)}>{agrupamento}</Text>
-                </View>
-                
-                <View style={style.exercisesContainer}>
-                    {exercicios.map((exercicio, index) => (
-                        <View style={style.exercicioBox(isLightMode)} key={index}>
-                            <Image 
-                                source={isLightMode ? require('../assets/icons/exercicio-light.png') : require('../assets/icons/exercicio-dark.png')}
-                                style={style.exercicioIcon}/>
-                            <Text style={style.exerciseText(isLightMode)}>{exercicio}</Text>
+                    {agrupamentos.map((agrupamento, index) => (
+                        <View key={index}>
+                            <View style={style.subHeader}>
+                                <Image source={requireIcon(agrupamento)} style={style.iconImage} />
+                                <Text style={style.titleText(isLightMode)}>{agrupamento}</Text>
+                            </View>
+
+                            <View style={style.exercisesContainer}>
+                                {exercicios_agrup[index].map((exercicio, idx) => (
+                                    <View style={style.exercicioBox(isLightMode)} key={idx}>
+                                        <Image
+                                            source={isLightMode ? require('../assets/icons/exercicio-light.png') : require('../assets/icons/exercicio-dark.png')}
+                                            style={style.exercicioIcon} />
+                                        <Text style={style.exerciseText(isLightMode)}>{exercicio}</Text>
+                                    </View>
+                                ))}
+                            </View>
                         </View>
-                        
                     ))}
+
+                </SafeAreaView>
+            </ScrollView>
+            
+            {!startButton && (
+                <View style={style.buttonSpace(isLightMode)}>
+                    <Pressable style={style.comecarTreinoButton(isLightMode)}>
+                        <Text style={style.comecarTreinoText(isLightMode)}>Iniciar Treino</Text>
+                    </Pressable>
                 </View>
-            </SafeAreaView>
-        </ScrollView>
+            )}
+        </>
     );
 }
 
 const style = StyleSheet.create({
-    scrollView: (isLightMode) =>  ({
+    scrollView: (isLightMode) => ({
         flex: 1,
         backgroundColor: isLightMode ? grays.background_light : grays.background_dark
     }),
     subHeader: {
-        flexDirection:"row",
-        gap:20,
-        justifyContent:"center",
-        alignItems:"center"
+        flexDirection: "row",
+        gap: 20,
+        justifyContent: "center",
+        alignItems: "center",
+        margin: 10
     },
     iconImage: {
         width: 70,
@@ -70,29 +67,44 @@ const style = StyleSheet.create({
     },
     titleText: (isLightMode) => ({
         color: isLightMode ? "black" : "white",
-        fontSize:22,
-        fontFamily:"Poppins"
+        fontSize: 22,
+        fontFamily: "Outfit"
     }),
     exercisesContainer: {
-        gap:20
+        gap: 20
     },
     exercicioBox: (isLightMode) => ({
-        flexDirection:"row",
-        paddingHorizontal:40,
-        gap:40,
-        borderStyle:'solid',
-        borderBottomWidth:1,
+        flexDirection: "row",
+        paddingHorizontal: 40,
+        gap: 40,
+        borderStyle: 'solid',
+        borderBottomWidth: 1,
         borderColor: isLightMode ? grays.gray3 : grays.gray7,
-        paddingBottom:5,
-        alignItems:'center'
+        paddingBottom: 5,
+        alignItems: 'center'
     }),
-    exercicioIcon:{
-        width:40,
-        height:40
+    exercicioIcon: {
+        width: 40,
+        height: 40
     },
     exerciseText: (isLightMode) => ({
         fontSize: 18,
         color: isLightMode ? 'black' : 'white',
-        fontFamily:"Poppins"
+        fontFamily: "Outfit"
+    }),
+    buttonSpace: (isLightMode) => ({
+        backgroundColor: isLightMode ? grays.background_light : grays.background_dark,
+        alignItems:'center',
+        paddingVertical:10
+    }),
+    comecarTreinoButton: (isLightMode) => ({
+        width:'50%',
+        backgroundColor: colors.primary1,
+        paddingVertical:10,
+        borderRadius:30
+    }),
+    comecarTreinoText: (isLightMode) => ({
+        textAlign:"center",
+        fontFamily:'Tauri'
     }),
 });

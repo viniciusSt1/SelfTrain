@@ -1,21 +1,21 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View, ImageBackground } from 'react-native';
 import { colors, grays } from '../styles/globalStyles';
+import { requireBackground } from '../utils/agrupamentos';
 
-export default function GroupDay({ navigation, agrupamento, dia, musculos, onPress }) {
+export default function TreinoDay({ navigation, agrupamentos, numero, tempo, qntExerc, onPress }) {
     return (
         <Pressable onPress={onPress}>
             <ImageBackground
-                source={style.backgroundImage(agrupamento)}
+                source={style.backgroundImage(agrupamentos)}
                 style={style.container}
                 resizeMode="cover"
             >
                 <View style={style.content}>
-                    <Text style={style.title}>{agrupamento}</Text>
-                    <Text style={style.dia}>Dia {dia}</Text>
-                    <Text style={style.musculo}>{musculos[0]}</Text>
-                    <Text style={style.musculo}>{musculos[1]}</Text>
-                    <Text style={style.musculo}>{musculos[2]}</Text>
+                    <Text style={style.title}>{agrupamentos.join(" + ")}</Text>
+                    <Text style={style.dia}>{numero}º treino</Text>
+                    <Text style={style.musculo}>Tempo de execução {tempo}</Text>
+                    <Text style={style.musculo}>{qntExerc} exercícios</Text>
                 </View>
             </ImageBackground>
         </Pressable>
@@ -29,23 +29,11 @@ const style = StyleSheet.create({
         overflow: "hidden",
         elevation:5
     },
-    backgroundImage: (agrupamento) => {
-        switch (agrupamento) {
-            case 'Abdomen':
-                return require('../assets/imgs/abdomen.jpg'); 
-            case 'Bíceps':
-                return require('../assets/imgs/biceps.jpg');
-            case 'Costas':
-                return require('../assets/imgs/costas.jpg'); 
-            case 'Perna':
-                return require('../assets/imgs/leg.jpg'); 
-            case 'Peito':
-                return require('../assets/imgs/peito.jpg'); 
-            case 'Tríceps':
-                return require('../assets/imgs/triceps.jpg'); 
-            default:
-                return null;
-        }
+    backgroundImage: (agrupamentos) => {
+        if (agrupamentos.length == 1)
+            return requireBackground(agrupamentos[0])
+        else
+            return require('../assets/imgs/generic_train.jpg');
     },
     content: {
         width: "100%",

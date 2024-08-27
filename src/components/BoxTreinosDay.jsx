@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
 import { colors, grays } from '../styles/globalStyles';
 
-export default function BoxGroupsDay({ navigation, agrupamentos, dia, objday, onPress, isLightMode }) {
+export default function BoxGroupsDay({ navigation, agrupamentos, numero, dia, data, onPress, isLightMode }) {
     return (
         <Pressable style={style.container(isLightMode)} onPress={onPress}>
             <Image 
@@ -11,8 +11,8 @@ export default function BoxGroupsDay({ navigation, agrupamentos, dia, objday, on
             />
             
             <View style={style.boxtext}>
-                <Text style={style.boxtextdia(isLightMode)}>Dia {dia}</Text>
-                <Text style={style.boxtextdata(isLightMode)}>{objday.day} {objday.dd}/{objday.mm}/{objday.aaaa}</Text>
+                <Text style={style.boxtextdia(isLightMode)}>{numero}º treino</Text>
+                <Text style={style.boxtextdata(isLightMode)}>{dia} {data}</Text>
                 <Text style={style.boxtextagrupamentos}>{agrupamentos.join(" + ")}</Text>
             </View>
         </Pressable>
@@ -38,7 +38,7 @@ const style = StyleSheet.create({
         width:"70%"
     },
     boxtextdia:(isLightMode) => ({
-        fontFamily:"Poppins",
+        fontFamily:"Outfit",
         color: isLightMode ? colors.primary3 : colors.primary1,
         fontSize: 12
     }),

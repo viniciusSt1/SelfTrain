@@ -55,7 +55,7 @@ const style = StyleSheet.create({
         paddingVertical:8,
         alignItems:"center",
         width:"100%",
-        maxWidth:250,
+        maxWidth:260,
         borderStyle:"solid",
         borderColor:colors.primary1,
         borderWidth:2,
@@ -75,7 +75,7 @@ const style = StyleSheet.create({
         paddingVertical:8,
         alignItems:"center",
         width:"100%",
-        maxWidth:250,
+        maxWidth:260,
         elevation:5
     },
     loginText:{
