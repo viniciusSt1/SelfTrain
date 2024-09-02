@@ -46,16 +46,18 @@ export default function Login({ navigation }) {
             <TextInput
                 placeholder="Email"
                 placeholderTextColor={grays.gray4}
-                style={style.input}
+                style={[styles.input(isLightMode), {width:'80%', marginBottom:20}]}
                 value={email}
+                autoCapitalize="none"
                 onChangeText={setEmail}
             />
             <TextInput
                 placeholder="Senha"
                 placeholderTextColor={grays.gray4}
                 secureTextEntry
-                style={style.input}
+                style={[styles.input(isLightMode), {width:'80%', marginBottom:20}]}
                 value={senha}
+                autoCapitalize="none"
                 onChangeText={setSenha}
             />
             <Pressable style={style.loginButton} onPress={() => login_form()}>
@@ -88,17 +90,6 @@ const style = StyleSheet.create({
         fontFamily:"Timmana",
         color:isLightMode ? "black" : "white"
     }),
-    input: {
-        width: '80%',
-        paddingVertical: 10,
-        paddingHorizontal: 40,
-        marginVertical: 15,
-        backgroundColor:"transparent",
-        borderStyle:"solid",
-        borderBottomWidth:1,
-        borderColor:grays.gray4,
-        color:grays.gray1
-    },
     loginButton: {
         backgroundColor: colors.primary1,
         paddingVertical: 10,

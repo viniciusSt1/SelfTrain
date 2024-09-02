@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-		backgroundColor:'red'
+		//backgroundColor:'red'
     },
 	background:(isLightMode) => ({
 		backgroundColor: isLightMode ? grays.background_light : grays.background_dark,
@@ -54,6 +54,16 @@ const styles = StyleSheet.create({
         color: isLightMode ? "black" : "white",
         fontFamily: 'Outfit',
         fontSize: 26
+    }),
+	input: (isLightMode) => ({
+		width:'100%',
+        paddingVertical: 10,
+        paddingHorizontal: 40,
+        backgroundColor:"transparent",
+        borderStyle:"solid",
+        borderBottomWidth:1,
+        borderColor:grays.gray4,
+        color:isLightMode ? 'black' : 'white'
     }),
 });
 

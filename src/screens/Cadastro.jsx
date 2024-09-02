@@ -29,9 +29,28 @@ export default function Cadastro({ navigation }) {
                     .collection('users')
                     .doc(user.uid)
                     .set({
+                        uid: user.uid,
+                        email: user.email,
+                        displayName: user.displayName,
+                        photoURL: user.photoURL,
+                        emailVerified: user.emailVerified,
+                        isAnonymous: user.isAnonymous,
+                        creationTime: user.metadata.creationTime,
+                        lastSignInTime: user.metadata.lastSignInTime,
+
                         nome: nome,
-                        email: email,
-                        createdAt: firestore.FieldValue.serverTimestamp(),
+                        altura:null,
+                        antebraco:null,
+                        braco:null,
+                        cintura:null,
+                        idade:null,
+                        ombros:null,
+                        panturrilha:null,
+                        peito:null,
+                        perna:null,
+                        peso:null,
+                        sexo:null,
+
                         treinos: [{exercicios:[]}]
                     })
                     .then(() => {
@@ -70,23 +89,25 @@ export default function Cadastro({ navigation }) {
             <TextInput
                 placeholder="Nome"
                 placeholderTextColor={grays.gray4}
-                style={style.input}
+                style={[styles.input(isLightMode), {width:'80%', marginBottom:20}]}
                 value={nome}
                 onChangeText={setNome}
             />
             <TextInput
                 placeholder="Email"
                 placeholderTextColor={grays.gray4}
-                style={style.input}
+                style={[styles.input(isLightMode), {width:'80%', marginBottom:20}]}
                 value={email}
+                autoCapitalize="none"
                 onChangeText={setEmail}
             />
             <TextInput
                 placeholder="Senha"
                 placeholderTextColor={grays.gray4}
                 secureTextEntry
-                style={style.input}
+                style={[styles.input(isLightMode), {width:'80%', marginBottom:20}]}
                 value={senha}
+                autoCapitalize="none"
                 onChangeText={setSenha}
             />
             <Pressable style={style.cadastroButton} onPress={() => cadastrar(nome,email,senha)}>
@@ -112,17 +133,6 @@ const style = StyleSheet.create({
         fontFamily:"Timmana",
         color:isLightMode ? "black" : "white"
     }),
-    input: {
-        width: '80%',
-        paddingVertical: 10,
-        paddingHorizontal: 40,
-        marginVertical: 15,
-        backgroundColor:"transparent",
-        borderStyle:"solid",
-        borderBottomWidth:1,
-        borderColor:grays.gray4,
-        color:grays.gray1
-    },
     cadastroButton: {
         backgroundColor: colors.primary1,
         paddingVertical: 10,
