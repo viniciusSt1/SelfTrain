@@ -27,7 +27,7 @@ export function requireBackground(agrupamento){
             return require('../assets/imgs/biceps.jpg');
         case 'Costas':
             return require('../assets/imgs/costas.jpg'); 
-        case 'Perna':
+        case 'Pernas':
             return require('../assets/imgs/leg.jpg'); 
         case 'Peitoral':
             return require('../assets/imgs/peito.jpg'); 

@@ -4,7 +4,7 @@ import UserContext from '../contexts/UserContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import auth from "@react-native-firebase/auth";
 import { useFocusEffect } from '@react-navigation/native';
-import styles, {colors, grays} from '../styles/globalStyles';
+import styles, { colors, grays } from '../styles/globalStyles';
 
 export default function Perfil({ navigation }) {
     const isLightMode = useColorScheme() === 'light';
@@ -32,9 +32,9 @@ export default function Perfil({ navigation }) {
     );
     */
 
-    async function att(){
+    async function att() {
         //user.nome='tucaaa'
-        await updateUser({nome:'Vinicius Stefanes'})
+        await updateUser({ nome: 'Vinicius Stefanes' })
     }
 
     if (!user) {
@@ -47,7 +47,7 @@ export default function Perfil({ navigation }) {
                 <View style={styles.screen}>
                     <Text style={styles.header(isLightMode)}>Seu perfil</Text>
                     <View style={style.profileContainer}>
-                        <Image 
+                        <Image
                             source={isLightMode ? require('../assets/imgs/user-light.png') : require('../assets/imgs/user-dark.png')}
                             style={style.profileImage}
                         />
@@ -63,10 +63,7 @@ export default function Perfil({ navigation }) {
                         <Text style={style.sectionText(isLightMode)}>Editar Medidas</Text>
                     </Pressable>
                     <Pressable style={style.section(isLightMode)}>
-                        <Text style={style.sectionText(isLightMode)}>Notificação para consumo de água</Text>
-                    </Pressable>
-                    <Pressable style={style.section(isLightMode)}>
-                        <Text style={style.sectionText(isLightMode)}>Notificação de treino</Text>
+                        <Text style={style.sectionText(isLightMode)} onPress={() => navigation.navigate('Notifications')}>Notificações</Text>
                     </Pressable>
                     <Pressable style={style.section(isLightMode)}>
                         <Text style={style.sectionText(isLightMode)}>Contate-nos</Text>
@@ -96,18 +93,18 @@ const style = StyleSheet.create({
     },
     profileDetails: {
         flex: 1,
-        gap:5
+        gap: 5
     },
     profileName: (isLightMode) => ({
         fontSize: 18,
         fontWeight: '600',
         color: isLightMode ? 'black' : 'white',
-        fontFamily:'OutFit'
+        fontFamily: 'OutFit'
     }),
     profileEmail: (isLightMode) => ({
         fontSize: 16,
         color: isLightMode ? grays.gray5 : grays.gray1,
-        fontFamily:'OutFit'
+        fontFamily: 'OutFit'
     }),
     section: (isLightMode) => ({
         paddingHorizontal: 20,

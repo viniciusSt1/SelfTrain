@@ -60,14 +60,23 @@ export default function Home({ route, navigation }) {
                     </View>
 
                     <TreinoDay agrupamentos={["Pernas","Costas"]} numero={19} tempo="70 min" qntExerc={12}
-                        onPress={() => navigation.navigate("Treino", { agrupamentos: ["Pernas","Costas"], titulo: "19º treino", exercicios_agrup: [["agachamento", "ex2", "ex3"],["barra1","barra2","barra3","barra4",'b','bb','bbb']] })}
+                        onPress={() => navigation.navigate("Treino", 
+                            { agrupamentos: ["Pernas","Costas"], 
+                            titulo: "19º treino", 
+                            exercicios_agrup: [["agachamento", "ex2", "ex3"],["barra1","barra2","barra3","barra4",'b','bb','bbb']] 
+                        })}
                     />
 
                     <Text style={style.subtitle(isLightMode)}>Próximos Treinos</Text>
 
                     <BoxTreinosDay 
                         navigation={navigation} agrupamentos={["Peitoral", "Costas"]} numero={20} data={data_atual} dia="Sábado" isLightMode={isLightMode} 
-                        onPress={() => navigation.navigate("Treino_agroups", {data:data_atual, agrupamentos:["Peitoral", "Costas"]})}/>
+                        onPress={() => navigation.navigate("Treino", 
+                            {titulo:data_atual, 
+                            agrupamentos:["Peitoral", "Costas"], 
+                            exercicios_agrup: [["agachamento", "ex2", "ex3"],["barra1","barra2","barra3","barra4",'b','bb','bbb']], 
+                            startButton:true}
+                        )}/>
                     
                     <BoxTreinosDay  navigation={navigation} agrupamentos={["Perna", "Abdomen"]} numero={21} data={data_atual} dia="Segunda-feira" isLightMode={isLightMode} />
                     <BoxTreinosDay  navigation={navigation} agrupamentos={["Bíceps", "Tríceps"]} numero={22} data={data_atual} dia="Quarta-feira" isLightMode={isLightMode} />

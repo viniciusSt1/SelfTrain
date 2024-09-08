@@ -4,15 +4,19 @@ import { useFonts } from 'expo-font';
 import { useContext, useEffect } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import UserContext from '../contexts/UserContext';
+import styles from '../styles/globalStyles';
+import { StatusBar } from 'expo-status-bar';
 
 import Inicio from '../screens/Inicio';
 import Login from '../screens/Login';
 import Cadastro from '../screens/Cadastro'
 import TabRoutes from './tab.routes';
+import { useColorScheme } from 'react-native';
 
 const InicioStack = createNativeStackNavigator();
 export default function Routes() {
     const { user } = useContext(UserContext)
+    const isLightMode = useColorScheme() === 'light'
 
     // Configurando fontes do aplicativo
     const [loaded, error] = useFonts({
@@ -35,28 +39,40 @@ export default function Routes() {
         return null;
 
     return user ? (
-        <NavigationContainer>
-            <TabRoutes />
-        </NavigationContainer>
+        <>
+            <StatusBar
+                barStyle={isLightMode ? 'dark-content' : 'light-content'}
+                style={styles.background(isLightMode)} />
+
+            <NavigationContainer>
+                <TabRoutes />
+            </NavigationContainer>
+        </>
+
     ) : (
-        <NavigationContainer>
-            <InicioStack.Navigator
-                initialRouteName="InicioStack"
-                screenOptions={{ headerShown: false }}
-            >
-                <InicioStack.Screen
-                    name="InicioStack"
-                    component={Inicio}
-                />
-                <InicioStack.Screen
-                    name="Login"
-                    component={Login}
-                />
-                <InicioStack.Screen
-                    name="Cadastro"
-                    component={Cadastro}
-                />
-            </InicioStack.Navigator >
-        </NavigationContainer>
+        <>
+            <StatusBar
+                barStyle={isLightMode ? 'dark-content' : 'light-content'}
+                style={styles.background(isLightMode)} />
+            <NavigationContainer>
+                <InicioStack.Navigator
+                    initialRouteName="InicioStack"
+                    screenOptions={{ headerShown: false }}
+                >
+                    <InicioStack.Screen
+                        name="InicioStack"
+                        component={Inicio}
+                    />
+                    <InicioStack.Screen
+                        name="Login"
+                        component={Login}
+                    />
+                    <InicioStack.Screen
+                        name="Cadastro"
+                        component={Cadastro}
+                    />
+                </InicioStack.Navigator >
+            </NavigationContainer>
+        </>
     )
 }

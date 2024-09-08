@@ -1,7 +1,7 @@
 import { Button, ScrollView, Text, View, StyleSheet, useColorScheme, TextInput, Image, Pressable} from "react-native";
 import styles, { grays } from "../styles/globalStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import agrupamentos, { requireIcon } from "../utils/agrupamentos";
 import firestore from "@react-native-firebase/firestore";
 
@@ -27,11 +27,12 @@ export default function Explorar({navigation}){
         return exerciciosAgrupados;
     }
     
-    // Uso da função
-    getExerciciosAgrupados().then((exerciciosAgrupados) => {
-        console.log(exerciciosAgrupados);
-        
-    });
+    //useEffect(() => {
+        getExerciciosAgrupados().then((exerciciosAgrupados) => {
+            console.log(exerciciosAgrupados);
+        });
+    //},[])
+    
 
     return (
         <SafeAreaView style={styles.background(isLightMode)}>

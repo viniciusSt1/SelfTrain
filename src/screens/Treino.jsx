@@ -9,35 +9,47 @@ export default function Treino({ route, navigation }) {
     const { titulo, agrupamentos, exercicios_agrup, startButton } = route.params;
     const isLightMode = useColorScheme() === 'light';
 
+    const renderSubHeader = () => {
+        const elements = [];
+        agrupamentos.forEach((agrupamento, index) => {
+            elements.push(
+                <Image key={`image-${index}`} source={requireIcon(agrupamento)} style={style.iconImage} />
+            );
+            if (index < agrupamentos.length - 1) {
+                elements.push(
+                    <Text key={`plus-${index}`} style={style.plusText}>+</Text>
+                );
+            }
+        });
+        return elements;
+    };
+
     return (
         <>
             <ScrollView style={style.scrollView(isLightMode)}>
                 <SafeAreaView style={styles.screen}>
                     <HeaderBack titulo={titulo} navigation={navigation} />
 
-                    {agrupamentos.map((agrupamento, index) => (
-                        <View key={index}>
-                            <View style={style.subHeader}>
-                                <Image source={requireIcon(agrupamento)} style={style.iconImage} />
-                                <Text style={style.titleText(isLightMode)}>{agrupamento}</Text>
-                            </View>
+                    <View style={style.subHeader}>
+                        {renderSubHeader()}
+                    </View>
 
-                            <View style={style.exercisesContainer}>
-                                {exercicios_agrup[index].map((exercicio, idx) => (
-                                    <View style={style.exercicioBox(isLightMode)} key={idx}>
-                                        <Image
-                                            source={isLightMode ? require('../assets/icons/exercicio-light.png') : require('../assets/icons/exercicio-dark.png')}
-                                            style={style.exercicioIcon} />
-                                        <Text style={style.exerciseText(isLightMode)}>{exercicio}</Text>
-                                    </View>
-                                ))}
-                            </View>
+                    {agrupamentos.map((agrupamento, index) => (
+                        <View style={style.exercisesContainer} key={index}>
+                            {exercicios_agrup[index].map((exercicio, idx) => (
+                                <View style={style.exercicioBox(isLightMode)} key={idx}>
+                                    <Image
+                                        source={isLightMode ? require('../assets/icons/exercicio-light.png') : require('../assets/icons/exercicio-dark.png')}
+                                        style={style.exercicioIcon} />
+                                    <Text style={style.exerciseText(isLightMode)}>{exercicio}</Text>
+                                </View>
+                            ))}
                         </View>
                     ))}
 
                 </SafeAreaView>
             </ScrollView>
-            
+
             {!startButton && (
                 <View style={style.buttonSpace(isLightMode)}>
                     <Pressable style={style.comecarTreinoButton(isLightMode)}>
@@ -54,6 +66,10 @@ const style = StyleSheet.create({
         flex: 1,
         backgroundColor: isLightMode ? grays.background_light : grays.background_dark
     }),
+    plusText: {
+        fontSize: 24,
+        color: 'gray',
+    },
     subHeader: {
         flexDirection: "row",
         gap: 20,
@@ -94,17 +110,17 @@ const style = StyleSheet.create({
     }),
     buttonSpace: (isLightMode) => ({
         backgroundColor: isLightMode ? grays.background_light : grays.background_dark,
-        alignItems:'center',
-        paddingVertical:10
+        alignItems: 'center',
+        paddingVertical: 10
     }),
     comecarTreinoButton: (isLightMode) => ({
-        width:'50%',
+        width: '50%',
         backgroundColor: colors.primary1,
-        paddingVertical:10,
-        borderRadius:30
+        paddingVertical: 10,
+        borderRadius: 30
     }),
     comecarTreinoText: (isLightMode) => ({
-        textAlign:"center",
-        fontFamily:'Tauri'
+        textAlign: "center",
+        fontFamily: 'Tauri'
     }),
 });
