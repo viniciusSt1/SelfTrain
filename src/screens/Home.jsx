@@ -9,7 +9,7 @@ import UserContext from "../contexts/UserContext";
 import { useContext, useEffect, useState } from "react";
 
 export default function Home({ route, navigation }) {
-    const treinos = true //treinos de hoje, deve vir de algum lugar
+    const treinos = false //treinos de hoje, deve vir de algum lugar
     //var users = [];
     //const { user } = useContext(UserContext)
 

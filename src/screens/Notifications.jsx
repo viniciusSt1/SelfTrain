@@ -1,18 +1,136 @@
-import React, { useState } from 'react';
-import { View, Text, Switch, Button, StyleSheet, Pressable, Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Switch, Pressable, Platform, ScrollView, StyleSheet, useColorScheme } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as Notifications from 'expo-notifications';
+import styles, { colors, grays } from '../styles/globalStyles';
+import HeaderBack from '../components/HeaderBack';
+import { MMKV } from 'react-native-mmkv';   // biblioteca para armazenamento local
 
-export default function NotificationSettings() {
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    }),
+  });
+
+// Configuração do MMKV
+const storage = new MMKV();
+
+export default function NotificationSettings({ navigation }) {
+    const isLightMode = useColorScheme() === 'light';
+
+    // estados para lembrete de hidratação
     const [isWaterNotificationEnabled, setWaterNotificationEnabled] = useState(false);
     const [waterInterval, setWaterInterval] = useState(2); // default 2 hours
+
+    // estados para lembrete de treino
     const [isWorkoutNotificationEnabled, setWorkoutNotificationEnabled] = useState(false);
     const [workoutReminderTime, setWorkoutReminderTime] = useState(new Date());
-
     const [showTimePicker, setShowTimePicker] = useState(false);
 
-    // Function to handle time picker
+    // estados para recebimento de emails
+    const [isEmailsNotificationEnabled, setIsEmailsNotificationEnabled] = useState(false);
+    
+
+    // Pedir permissão para notificações
+    useEffect(() => {
+        const requestPermissions = async () => {
+            const { status } = await Notifications.requestPermissionsAsync();
+            if (status !== 'granted') {
+                console.log('Permission for notifications not granted');
+            }
+        };
+        requestPermissions();
+    }, []);
+
+    // Carregar estados ao montar o componente
+    useEffect(() => {
+        const loadNotificationSettings = () => {
+            const waterEnabled = storage.getBoolean('isWaterNotificationEnabled');
+            const workoutEnabled = storage.getBoolean('isWorkoutNotificationEnabled');
+            const waterIntervalStored = storage.getNumber('waterInterval');
+            const workoutTimeStored = storage.getString('workoutReminderTime');
+            const emailStored = storage.getBoolean('emailStored');
+            
+            if (waterEnabled !== null) setWaterNotificationEnabled(waterEnabled);
+            if (workoutEnabled !== null) setWorkoutNotificationEnabled(workoutEnabled);
+            if (waterIntervalStored !== null) setWaterInterval(waterIntervalStored);
+            if (workoutTimeStored !== null) setWorkoutReminderTime(new Date(workoutTimeStored));
+            if (emailStored !== null) setIsEmailsNotificationEnabled(emailStored);
+        };
+
+        loadNotificationSettings();
+    }, []);
+
+    // Salvar estados ao alterar as notificações
+    useEffect(() => {
+        storage.set('isWaterNotificationEnabled', isWaterNotificationEnabled);
+        storage.set('isWorkoutNotificationEnabled', isWorkoutNotificationEnabled);
+        storage.set('waterInterval', waterInterval);
+        storage.set('workoutReminderTime', workoutReminderTime.toString());
+        storage.set('emailStored', isEmailsNotificationEnabled)
+    }, [isWaterNotificationEnabled, isWorkoutNotificationEnabled, waterInterval, workoutReminderTime, isEmailsNotificationEnabled]);
+
+    useEffect(() => {
+        if (isWaterNotificationEnabled) {
+            scheduleWaterNotifications();
+        }
+    }, [isWaterNotificationEnabled, waterInterval]);
+
+    useEffect(() => {
+        if (isWorkoutNotificationEnabled) {
+            scheduleWorkoutNotifications();
+        }
+    }, [isWorkoutNotificationEnabled, workoutReminderTime]);
+
+    const scheduleWaterNotifications = async () => {
+        // Cancelar notificações de água usando um identificador específico
+        const waterNotifications = await Notifications.getAllScheduledNotificationsAsync();
+        waterNotifications.forEach(notification => {
+            if (notification.content.title === "Hora de beber água") {
+                Notifications.cancelScheduledNotificationAsync(notification.identifier);
+            }
+        });
+
+        for (let i = 0; i < 24; i += waterInterval) {
+            await Notifications.scheduleNotificationAsync({
+                content: {
+                    title: "Hora de beber água",
+                    body: "É hora de se hidratar!",
+                },
+                trigger: {
+                    hour: (new Date().getHours() + i) % 24,
+                    minute: 0,
+                    repeats: true,
+                },
+            });
+        }
+    };
+
+    const scheduleWorkoutNotifications = async () => {
+        const workoutNotifications = await Notifications.getAllScheduledNotificationsAsync();
+        workoutNotifications.forEach(notification => {
+            if (notification.content.title === "Lembrete de treino") {
+                Notifications.cancelScheduledNotificationAsync(notification.identifier);
+            }
+        });
+
+        await Notifications.scheduleNotificationAsync({
+            content: {
+                title: "Lembrete de treino",
+                body: "É hora do seu treino!",
+            },
+            trigger: {
+                hour: workoutReminderTime.getHours(),
+                minute: workoutReminderTime.getMinutes(),
+                repeats: true,
+            },
+        });
+    };
+
     const onChangeTime = (event, selectedTime) => {
         setShowTimePicker(false);
         if (selectedTime) {
@@ -21,149 +139,120 @@ export default function NotificationSettings() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>Configurações de Notificações</Text>
-
-            {/* Water Reminder */}
-            <View style={styles.notificationOption}>
-                <View style={styles.row}>
-                    <Text style={styles.optionText}>Notificação para beber água</Text>
-                    <Switch 
-                        value={isWaterNotificationEnabled} 
-                        onValueChange={setWaterNotificationEnabled}
-                        thumbColor={isWaterNotificationEnabled ? "#00bfa5" : "#f4f3f4"}
-                        trackColor={{ false: "#ccc", true: "#00bfa5" }}
-                    />
-                </View>
-                {isWaterNotificationEnabled && (
-                    <View style={styles.pickerContainer}>
-                        <Text style={styles.pickerLabel}>Intervalo de horas:</Text>
-                        <Picker
-                            selectedValue={waterInterval}
-                            onValueChange={(itemValue) => setWaterInterval(itemValue)}
-                            style={styles.picker}
-                        >
-                            {[...Array(12).keys()].map(i => (
-                                <Picker.Item key={i + 1} label={`${i + 1} horas`} value={i + 1} />
-                            ))}
-                        </Picker>
-                    </View>
-                )}
-            </View>
-
-            {/* Workout Reminder */}
-            <View style={styles.notificationOption}>
-                <View style={styles.row}>
-                    <Text style={styles.optionText}>Lembrete de treino</Text>
-                    <Switch 
-                        value={isWorkoutNotificationEnabled} 
-                        onValueChange={setWorkoutNotificationEnabled}
-                        thumbColor={isWorkoutNotificationEnabled ? "#ff6f00" : "#f4f3f4"}
-                        trackColor={{ false: "#ccc", true: "#ff6f00" }}
-                    />
-                </View>
-                {isWorkoutNotificationEnabled && (
-                    <View style={styles.timePickerContainer}>
-                        <Text style={styles.pickerLabel}>Horário do lembrete:</Text>
-                        <Pressable style={styles.timeButton} onPress={() => setShowTimePicker(true)}>
-                            <Text style={styles.timeText}>
-                                {`${workoutReminderTime.getHours()}:${workoutReminderTime.getMinutes() < 10 ? '0' : ''}${workoutReminderTime.getMinutes()}`}
-                            </Text>
-                        </Pressable>
-                        {showTimePicker && (
-                            <DateTimePicker
-                                value={workoutReminderTime}
-                                mode="time"
-                                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                                onChange={onChangeTime}
+        <SafeAreaView style={styles.background(isLightMode)}>
+            <ScrollView>
+                <View style={styles.screen}>
+                    <HeaderBack titulo="Notificações" navigation={navigation} />
+                    <View style={style.notificationOption(isLightMode)}>
+                        <View style={style.row}>
+                            <Text style={style.optionText(isLightMode)}>Receber emails</Text>
+                            <Switch
+                                value={isEmailsNotificationEnabled}
+                                onValueChange={setIsEmailsNotificationEnabled}
+                                thumbColor={isEmailsNotificationEnabled ? colors.primary2: colors.gray1}
+                                trackColor={{ false: grays.gray3, true: colors.primary1 }}
                             />
+                        </View>
+                    </View>
+                    <View style={style.notificationOption(isLightMode)}>
+                        <View style={style.row}>
+                            <Text style={style.optionText(isLightMode)}>Notificação para beber água</Text>
+                            <Switch
+                                value={isWaterNotificationEnabled}
+                                onValueChange={setWaterNotificationEnabled}
+                                thumbColor={isWaterNotificationEnabled ? colors.primary2: colors.gray1}
+                                trackColor={{ false: grays.gray3, true: colors.primary1 }}
+                            />
+                        </View>
+
+                        {isWaterNotificationEnabled && (
+                            <View style={style.pickerContainer}>
+                                <Text style={style.pickerLabel(isLightMode)}>Intervalo de horas:</Text>
+                                <View style={style.picker(isLightMode)}>
+                                    <Picker
+                                        selectedValue={waterInterval}
+                                        onValueChange={(itemValue) => setWaterInterval(itemValue)}
+                                    >
+                                        {[...Array(12).keys()].map(i => (
+                                            <Picker.Item key={i + 1} label={`${i + 1} horas`} value={i + 1} />
+                                        ))}
+                                    </Picker>
+                                </View>
+                            </View>
                         )}
                     </View>
-                )}
-            </View>
 
-            {/* Save Button */}
-            <View style={styles.buttonContainer}>
-                <Pressable style={styles.saveButton}>
-                    <Text style={styles.saveButtonText}>Salvar Configurações</Text>
-                </Pressable>
-            </View>
+                    <View style={style.notificationOption(isLightMode)}>
+                        <View style={style.row}>
+                            <Text style={style.optionText(isLightMode)}>Lembrete de treino</Text>
+                            <Switch
+                                value={isWorkoutNotificationEnabled}
+                                onValueChange={setWorkoutNotificationEnabled}
+                                thumbColor={isWorkoutNotificationEnabled ? colors.primary2: colors.gray1}
+                                trackColor={{ false: grays.gray3, true: colors.primary1 }}
+                            />
+                        </View>
+
+                        {isWorkoutNotificationEnabled && (
+                            <View style={style.pickerContainer}>
+                                <Text style={style.pickerLabel(isLightMode)}>Horário do lembrete:</Text>
+                                <Pressable style={style.picker(isLightMode)} onPress={() => setShowTimePicker(true)}>
+                                    <Text style={style.timeText}>
+                                        {`${workoutReminderTime.getHours()}:${workoutReminderTime.getMinutes() < 10 ? '0' : ''}${workoutReminderTime.getMinutes()}`}
+                                    </Text>
+                                </Pressable>
+
+                                {showTimePicker && (
+                                    <DateTimePicker
+                                        value={workoutReminderTime}
+                                        mode="time"
+                                        display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                                        onChange={onChangeTime}
+                                    />
+                                )}
+                            </View>
+                        )}
+                    </View>
+                </View>
+            </ScrollView>
         </SafeAreaView>
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f9f9f9',
-        paddingHorizontal: 20,
-        paddingVertical: 30,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        textAlign: 'center',
-        color: '#333',
-    },
-    notificationOption: {
-        backgroundColor: '#fff',
-        borderRadius: 12,
+const style = StyleSheet.create({
+    notificationOption: (isLightMode) => ({
+        backgroundColor: isLightMode ? 'white' : grays.gray7,
+        borderRadius: 10,
         padding: 20,
-        marginBottom: 20,
-        elevation: 3,
-    },
+        gap: 10
+    }),
     row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    optionText: {
+    optionText: (isLightMode) => ({
         fontSize: 18,
-        fontWeight: '500',
-        color: '#333',
-    },
+        color: isLightMode ? 'black' : 'white',
+    }),
     pickerContainer: {
-        marginTop: 10,
+        gap: 5
     },
-    pickerLabel: {
+    pickerLabel: (isLightMode) => ({
         fontSize: 16,
-        color: '#666',
+        color: isLightMode ? grays.gray5 : grays.gray5,
         marginBottom: 5,
-    },
-    picker: {
-        height: 40,
-        backgroundColor: '#f0f0f0',
-        borderRadius: 8,
-    },
-    timePickerContainer: {
-        marginTop: 10,
-    },
-    timeButton: {
+    }),
+    picker: (isLightMode) => ({
+        backgroundColor: isLightMode ? grays.gray1 : grays.background_light,
+        borderRadius: 10,
         height: 40,
         justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f0f0f0',
-        borderRadius: 8,
-    },
+        elevation: 2
+    }),
     timeText: {
         fontSize: 16,
-        color: '#333',
-    },
-    buttonContainer: {
-        marginTop: 20,
-        alignItems: 'center',
-    },
-    saveButton: {
-        backgroundColor: '#00bfa5',
-        borderRadius: 20,
-        paddingVertical: 12,
-        paddingHorizontal: 30,
-        elevation: 3,
-    },
-    saveButtonText: {
-        fontSize: 18,
-        color: '#fff',
-        fontWeight: 'bold',
+        color: 'black',
+        textAlign: 'center'
     },
 });
