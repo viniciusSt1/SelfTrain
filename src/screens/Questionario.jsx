@@ -100,7 +100,7 @@ export default function Questionario({ navigation }) {
         if (currentQuestionIndex > 0) 
             setCurrentQuestionIndex(currentQuestionIndex - 1);
         else
-            navigation.goBack()
+            navigation.navigate('HomeTab')
     };
 
     return (

@@ -9,7 +9,10 @@ import UserContext from "../contexts/UserContext";
 import { useContext, useEffect, useState } from "react";
 
 export default function Home({ route, navigation }) {
-    const treinos = false //treinos de hoje, deve vir de algum lugar
+    const treinos = true //treinos de hoje, deve vir de algum lugar
+
+    // navigation.getParent().navigate('ExplorarTab') navegar para outra tabBar
+
     //var users = [];
     //const { user } = useContext(UserContext)
 
@@ -98,7 +101,7 @@ export default function Home({ route, navigation }) {
                         <Text style={style.emptyText}>Ainda não há treinos por aqui ...</Text>
                     </View>
                 </ImageBackground >
-                <Pressable style={style.gerarTreinoBox} onPress={() => navigation.navigate("Question")}>
+                <Pressable style={style.gerarTreinoBox} onPress={() => navigation.getParent().navigate('QuestionarioTab')}>
                     <Text style={style.gerarTreinoText}>Gerar treino agora</Text>
                 </Pressable>
             </View>

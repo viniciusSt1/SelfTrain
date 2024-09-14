@@ -52,7 +52,7 @@ export default function Treino({ route, navigation }) {
 
             {!startButton && (
                 <View style={style.buttonSpace(isLightMode)}>
-                    <Pressable style={style.comecarTreinoButton(isLightMode)}>
+                    <Pressable style={style.comecarTreinoButton(isLightMode)} onPress={() => navigation.getParent().navigate('TreinamentoTab')}>
                         <Text style={style.comecarTreinoText(isLightMode)}>Iniciar Treino</Text>
                     </Pressable>
                 </View>

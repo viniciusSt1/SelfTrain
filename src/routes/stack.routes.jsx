@@ -7,6 +7,7 @@ import Perfil from '../screens/Perfil';
 import Planejamento from '../screens/Planejamento';
 import Treino from '../screens/Treino';
 import Exercicio from '../screens/Exercicio'
+import Treinamento from '../screens/Treinamento'
 import Questionario from '../screens/Questionario';
 import EditarPerfil from '../screens/EditarPerfil'
 import EditarMedidas from '../screens/EditarMedidas'
@@ -23,15 +24,8 @@ export function HomeStackScreen() {
                 name="Home"
                 component={Home} />
             <HomeStack.Screen
-                name="Question"
-                component={Questionario}
-                options={{ tabBarStyle: { display: 'none' } }} />
-            <HomeStack.Screen
                 name="Treino"
                 component={Treino} />
-            <HomeStack.Screen
-                name="Exercicio"
-                component={Exercicio} />
         </HomeStack.Navigator>
     );
 }
@@ -49,9 +43,6 @@ export function ExplorarStackScreen() {
             <ExplorarStack.Screen
                 name="Treino"
                 component={Treino} />
-            <ExplorarStack.Screen
-                name="Exercicio"
-                component={Exercicio} />
         </ExplorarStack.Navigator>
     );
 }
@@ -69,9 +60,6 @@ export function PlanejamentoStackScreen() {
             <PlanejamentoStack.Screen
                 name="Treino"
                 component={Treino} />
-            <PlanejamentoStack.Screen
-                name="Exercicio"
-                component={Exercicio} />
         </PlanejamentoStack.Navigator>
     );
 }
