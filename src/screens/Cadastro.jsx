@@ -1,13 +1,16 @@
-import { useState }from 'react';
-import { Pressable, Text, TextInput, useColorScheme, View, StyleSheet, Alert } from "react-native";
+import { useState, useContext }from 'react';
+import { Pressable, Text, TextInput, useColorScheme, View, StyleSheet, Alert, ActivityIndicator } from "react-native";
 import { MaterialIcons, FontAwesome5, AntDesign } from '@expo/vector-icons';
 import { SafeAreaView } from "react-native-safe-area-context";
 import styles, {colors,grays} from '../styles/globalStyles';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import UserContext from '../contexts/UserContext';
 
 export default function Cadastro({ navigation }) {
     const isLightMode = useColorScheme() === 'light';
+    const { setUser } = useContext(UserContext);
+    const [loading,setLoading] = useState(false)
 
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
@@ -15,61 +18,69 @@ export default function Cadastro({ navigation }) {
 
     function cadastrar(nome,email,senha){
         if (email === '' || senha === '') {
-            Alert.alert('Erro', 'Por favor, preencha todos os campos.');
+            Alert.alert('Falha no cadastro', 'Por favor, preencha todos os campos.');
             return;
         }
+
+        setLoading(true);
 
         auth()
         .createUserWithEmailAndPassword(email, senha)
         .then((userCredential) => {
             const user = userCredential.user
-            console.log('User account created & signed in!');
+            console.log('Usuario criado e logado');
             console.log('UID:', user.uid);
+            
+            let novoUsuario = {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+                emailVerified: user.emailVerified,
+                isAnonymous: user.isAnonymous,
+                creationTime: user.metadata.creationTime,
+                lastSignInTime: user.metadata.lastSignInTime,
+
+                nome: nome, 
+                altura:null,
+                antebraco:null,
+                braco:null,
+                cintura:null,
+                idade:null,
+                ombros:null,
+                panturrilha:null,
+                peito:null,
+                perna:null,
+                peso:null,
+                sexo:null,
+
+                treinos: [{exercicios:[]}]
+            }
+
             firestore()
                     .collection('users')
                     .doc(user.uid)
-                    .set({
-                        uid: user.uid,
-                        email: user.email,
-                        displayName: user.displayName,
-                        photoURL: user.photoURL,
-                        emailVerified: user.emailVerified,
-                        isAnonymous: user.isAnonymous,
-                        creationTime: user.metadata.creationTime,
-                        lastSignInTime: user.metadata.lastSignInTime,
-
-                        nome: nome,
-                        altura:null,
-                        antebraco:null,
-                        braco:null,
-                        cintura:null,
-                        idade:null,
-                        ombros:null,
-                        panturrilha:null,
-                        peito:null,
-                        perna:null,
-                        peso:null,
-                        sexo:null,
-
-                        treinos: [{exercicios:[]}]
-                    })
+                    .set(novoUsuario)
                     .then(() => {
-                        console.log('User data added to Firestore!');
-                        
-                        //navigation.navigate("App");
+                        console.log('Usuario adicionado ao firestore');
+                        //console.log(novoUsuario)
+                        setUser(novoUsuario)
+                        setLoading(false)
                     })
                     .catch(error => {
                         console.error('Error adding user data to Firestore:', error);
+                        setLoading(false)
                     });
         })
         .catch(error => {
             if (error.code === 'auth/email-already-in-use') 
-                console.log('Email já esta em uso');
+                Alert.alert('Falha no cadastro','Email já esta em uso');
             
             if (error.code === 'auth/invalid-email') 
-                console.log('Email inválido');
+                Alert.alert('Falha no cadastro','Digite um email válido');
 
-            console.error(error);
+            setLoading(false);
+            console.log(error);
         });
     }
 
@@ -111,7 +122,7 @@ export default function Cadastro({ navigation }) {
                 onChangeText={setSenha}
             />
             <Pressable style={style.cadastroButton} onPress={() => cadastrar(nome,email,senha)}>
-                <Text style={style.cadastroButtonText}>Cadastrar</Text>
+                {loading ? <ActivityIndicator size={24}/> : <Text style={style.cadastroButtonText}>Cadastrar</Text>}
             </Pressable>
 
         </SafeAreaView>

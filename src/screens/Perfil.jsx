@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
-import { View, Text, Button, ScrollView, useColorScheme, Image, StyleSheet, Pressable } from 'react-native';
+import { View, Text, Button, ScrollView, useColorScheme, Image, StyleSheet, Pressable, Alert } from 'react-native';
 import UserContext from '../contexts/UserContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import auth from "@react-native-firebase/auth";
+import firestore from '@react-native-firebase/firestore';
 import { useFocusEffect } from '@react-navigation/native';
 import styles, { colors, grays } from '../styles/globalStyles';
 
@@ -31,6 +32,40 @@ export default function Perfil({ navigation }) {
         }, [user]) // Reexecutar quando `user` mudar
     );
     */
+    async function deletarConta() {
+        Alert.alert(
+            "Deletar conta",
+            "Tem certeza que deseja deletar sua conta? Esta ação não pode ser desfeita.",
+            [
+                {
+                    text: "Cancelar",
+                    style: "cancel"
+                },
+                {
+                    text: "Deletar",
+                    style: "destructive",
+                    onPress: async () => {
+                        try {
+                            const currentUser = auth().currentUser;
+                            if (currentUser) {
+                                await currentUser.delete();
+                                await firestore().collection('users').doc(currentUser.uid).delete();
+                                Alert.alert("Conta deletada", "Sua conta foi deletada com sucesso.");
+                            }
+                        } catch (error) {
+                            if (error.code === 'auth/requires-recent-login') {
+                                Alert.alert(
+                                    "Erro ao deletar conta",
+                                    "Por razões de segurança, por favor, faça login novamente e tente excluir a conta."
+                                );
+                            } else 
+                                Alert.alert("Erro", "Ocorreu um erro ao deletar sua conta. Tente novamente mais tarde.");
+                        }
+                    }
+                }
+            ]
+        );
+    }
 
     async function att() {
         //user.nome='tucaaa'
@@ -68,7 +103,7 @@ export default function Perfil({ navigation }) {
                     <Pressable style={style.section(isLightMode)}>
                         <Text style={style.sectionText(isLightMode)}>Contate-nos</Text>
                     </Pressable>
-                    <Pressable style={style.section(isLightMode)} onPress={() => att()}>
+                    <Pressable style={style.section(isLightMode)} onPress={() => deletarConta()}>
                         <Text style={style.sectionText(isLightMode)}>Deletar conta</Text>
                     </Pressable>
                     <Pressable style={style.section(isLightMode)} onPress={() => auth().signOut()}>

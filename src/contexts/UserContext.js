@@ -10,7 +10,7 @@ export const UserProvider = ({ children }) => {
     useEffect(() => {
         const unsubscribe = auth().onAuthStateChanged(async _user => {  //Função ativada quando um usuário faz login/logout
             if (_user) {
-                try {
+                try { 
                     // Obtenha os dados do usuário a partir do Firestore
                     const userDoc = await firestore()
                         .collection('users')
@@ -52,13 +52,15 @@ export const UserProvider = ({ children }) => {
                 ...prevState,
                 ...newData
             }));
+
+            console.log("usuario atualizado : ", user)
         } catch (error) {
             console.error("Erro ao atualizar dados do usuário no Firestore: ", error);
         }
     };
 
     return (
-        <UserContext.Provider value={{ user, updateUser }}>
+        <UserContext.Provider value={{ user, updateUser, setUser }}>
             {children}
         </UserContext.Provider>
     );

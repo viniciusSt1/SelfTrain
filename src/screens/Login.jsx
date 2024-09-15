@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pressable, Text, TextInput, useColorScheme, View, StyleSheet, Alert} from "react-native";
+import { Pressable, Text, TextInput, useColorScheme, View, StyleSheet, Alert, ActivityIndicator} from "react-native";
 import { MaterialIcons, FontAwesome5, AntDesign } from '@expo/vector-icons';
 import { SafeAreaView } from "react-native-safe-area-context";
 import styles, {colors,grays} from '../styles/globalStyles';
@@ -7,6 +7,7 @@ import auth from '@react-native-firebase/auth';
 
 export default function Login({ navigation }) {
     const isLightMode = useColorScheme() === 'light';
+    const [loading, setLoading] = useState(false)
 
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
@@ -17,16 +18,44 @@ export default function Login({ navigation }) {
             return;
         }
 
+        setLoading(true);
+
         auth()
         .signInWithEmailAndPassword(email, senha)
         .then(() => {
             console.log('Login efetuado com sucesso');
+            setLoading(false);
             //navigation.navigate("App")
         })
         .catch(error => {
             console.log('Erro ao tentar logar');
-
-            console.error(error);
+            setLoading(false);
+            switch (error.code) {
+                case 'auth/invalid-email':
+                    Alert.alert('Erro de Login', 'O email fornecido é inválido.');
+                    break;
+                case 'auth/user-not-found':
+                    Alert.alert('Erro de Login', 'Nenhum usuário encontrado com esse email.');
+                    break;
+                case 'auth/wrong-password':
+                    Alert.alert('Erro de Login', 'Senha incorreta.');
+                    break;
+                case 'auth/user-disabled':
+                    Alert.alert('Erro de Login', 'A conta do usuário foi desativada.');
+                    break;
+                case 'auth/network-request-failed':
+                    Alert.alert('Erro de Login', 'Falha na rede. Verifique sua conexão com a internet.');
+                    break;
+                case 'auth/too-many-requests':
+                    Alert.alert('Erro de Login', 'Muitos pedidos foram feitos. Tente novamente mais tarde.');
+                    break;
+                case 'auth/operation-not-allowed':
+                    Alert.alert('Erro de Login', 'Operação não permitida. Verifique as configurações do Firebase.');
+                    break;
+                default:
+                    Alert.alert('Erro de Login', 'Ocorreu um erro desconhecido. Por favor, tente novamente.');
+                    break;
+            }
         });
     }
 
@@ -61,7 +90,7 @@ export default function Login({ navigation }) {
                 onChangeText={setSenha}
             />
             <Pressable style={style.loginButton} onPress={() => login_form()}>
-                <Text style={style.loginButtonText}>Login</Text>
+                {loading ? <ActivityIndicator size={24} /> : <Text style={style.loginButtonText}>Login</Text>}
             </Pressable>
             <View style={style.linksContainer}>
                 <Text style={style.linkText(isLightMode)} onPress={() => navigation.navigate("Cadastro")}>Não tenho cadastro</Text>
