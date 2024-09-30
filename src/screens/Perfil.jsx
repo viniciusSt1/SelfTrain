@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View, Text, Button, ScrollView, useColorScheme, Image, StyleSheet, Pressable, Alert } from 'react-native';
+import { View, Text, Button, ScrollView, useColorScheme, Image, StyleSheet, Pressable, Alert, Linking } from 'react-native';
 import UserContext from '../contexts/UserContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import auth from "@react-native-firebase/auth";
@@ -32,6 +32,22 @@ export default function Perfil({ navigation }) {
         }, [user]) // Reexecutar quando `user` mudar
     );
     */
+    const phoneNumber = '5519982037314'; // Exemplo: +55 11 99999-9999
+
+    const openWhatsApp = () => {
+        const url = `https://wa.me/${phoneNumber}`;
+        Linking.canOpenURL(url).then(supported => {
+            if (supported) {
+                Linking.openURL(url);
+            } else {
+                Alert.alert('Erro', 'Não é possível abrir o WhatsApp.');
+            }
+        }).catch(err => {
+            console.error('Erro ao tentar abrir o WhatsApp', err);
+            Alert.alert('Erro', 'Não foi possível abrir o WhatsApp. Verifique o erro no console.');
+        });
+    };
+
     async function deletarConta() {
         Alert.alert(
             "Deletar conta",
@@ -97,10 +113,10 @@ export default function Perfil({ navigation }) {
                     <Pressable style={style.section(isLightMode)} onPress={() => navigation.navigate('EditarMedidas')}>
                         <Text style={style.sectionText(isLightMode)}>Editar Medidas</Text>
                     </Pressable>
-                    <Pressable style={style.section(isLightMode)}>
-                        <Text style={style.sectionText(isLightMode)} onPress={() => navigation.navigate('Notifications')}>Notificações</Text>
+                    <Pressable style={style.section(isLightMode)} onPress={() => navigation.navigate('Notifications')}>
+                        <Text style={style.sectionText(isLightMode)}>Notificações</Text>
                     </Pressable>
-                    <Pressable style={style.section(isLightMode)}>
+                    <Pressable style={style.section(isLightMode)} onPress={() => openWhatsApp()}>
                         <Text style={style.sectionText(isLightMode)}>Contate-nos</Text>
                     </Pressable>
                     <Pressable style={style.section(isLightMode)} onPress={() => deletarConta()}>

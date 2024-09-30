@@ -42,7 +42,7 @@ export default function Cadastro({ navigation }) {
                 lastSignInTime: user.metadata.lastSignInTime,
 
                 nome: nome, 
-                altura:null,
+                altura:null, 
                 antebraco:null,
                 braco:null,
                 cintura:null,
@@ -54,7 +54,7 @@ export default function Cadastro({ navigation }) {
                 peso:null,
                 sexo:null,
 
-                treinos: [{exercicios:[]}]
+                treinos: []
             }
 
             firestore()

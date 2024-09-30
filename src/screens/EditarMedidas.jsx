@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Pressable, Text, TextInput, useColorScheme, View, StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styles, { colors, grays } from '../styles/globalStyles';
 import HeaderBack from '../components/HeaderBack';
 import UserContext from '../contexts/UserContext';
-import { useContext } from 'react';
 
 export default function EditarMedidas({ navigation }) {
     const isLightMode = useColorScheme() === 'light';
@@ -21,102 +20,42 @@ export default function EditarMedidas({ navigation }) {
     const [perna, setPerna] = useState(user.perna || '');
     const [panturrilha, setPanturrilha] = useState(user.panturrilha || '');
 
+    const renderInput = (value, setValue, placeholder) => {
+        return (
+            <View style={style.inputContainer}>
+                <Text style={style.floatingLabel(value)}>
+                    {placeholder}
+                </Text>
+                <TextInput
+                    placeholder=""
+                    placeholderTextColor={grays.gray5}
+                    style={[styles.input(isLightMode), { paddingTop: value ? 24 : 16 }]}
+                    value={value}
+                    autoCapitalize="none"
+                    onChangeText={setValue}
+                    keyboardType='numeric'
+                    onFocus={() => setValue(value)}
+                />
+            </View>
+        );
+    };
+
     return (
         <SafeAreaView style={styles.background(isLightMode)}>
             <ScrollView>
                 <View style={styles.screen}>
                     <HeaderBack titulo="Editar Medidas" navigation={navigation} />
                     <View style={style.inputsContainer}>
-                        <TextInput
-                            placeholder="Altura"
-                            placeholderTextColor={grays.gray5}
-                            style={styles.input(isLightMode)}
-                            value={altura.toString()}
-                            autoCapitalize="none"
-                            onChangeText={setAltura}
-                            keyboardType='numeric'
-                        />
-                        <TextInput
-                            placeholder="Peso"
-                            placeholderTextColor={grays.gray5}
-                            style={styles.input(isLightMode)}
-                            value={peso.toString()}
-                            autoCapitalize="none"
-                            onChangeText={setPeso}
-                            keyboardType='numeric'
-                        />
-                        <TextInput
-                            placeholder="Ombros"
-                            placeholderTextColor={grays.gray5}
-                            style={styles.input(isLightMode)}
-                            value={ombros.toString()}
-                            autoCapitalize="none"
-                            onChangeText={setOmbros}
-                            keyboardType='numeric'
-                        />
-                        <TextInput
-                            placeholder="Peito"
-                            placeholderTextColor={grays.gray5}
-                            style={styles.input(isLightMode)}
-                            value={peito.toString()}
-                            autoCapitalize="none"
-                            onChangeText={setPeito}
-                            keyboardType='numeric'
-                        />
-                        <TextInput
-                            placeholder="Antebraço"
-                            placeholderTextColor={grays.gray5}
-                            style={styles.input(isLightMode)}
-                            value={antebraco.toString()}
-                            autoCapitalize="none"
-                            onChangeText={setAntebraco}
-                            keyboardType='numeric'
-                        />
-                        <TextInput
-                            placeholder="Braço"
-                            placeholderTextColor={grays.gray5}
-                            style={styles.input(isLightMode)}
-                            value={braco.toString()}
-                            autoCapitalize="none"
-                            onChangeText={setBraco}
-                            keyboardType='numeric'
-                        />
-                        <TextInput
-                            placeholder="Cintura"
-                            placeholderTextColor={grays.gray5}
-                            style={styles.input(isLightMode)}
-                            value={cintura.toString()}
-                            autoCapitalize="none"
-                            onChangeText={setCintura}
-                            keyboardType='numeric'
-                        />
-                        <TextInput
-                            placeholder="Quadril"
-                            placeholderTextColor={grays.gray5}
-                            style={styles.input(isLightMode)}
-                            value={quadril.toString()}
-                            autoCapitalize="none"
-                            onChangeText={setQuadril}
-                            keyboardType='numeric'
-                        />
-                        <TextInput
-                            placeholder="Perna"
-                            placeholderTextColor={grays.gray5}
-                            style={styles.input(isLightMode)}
-                            value={perna.toString()}
-                            autoCapitalize="none"
-                            onChangeText={setPerna}
-                            keyboardType='numeric'
-                        />
-                        <TextInput
-                            placeholder="Panturrilha"
-                            placeholderTextColor={grays.gray5}
-                            style={styles.input(isLightMode)}
-                            value={panturrilha.toString()}
-                            autoCapitalize="none"
-                            onChangeText={setPanturrilha}
-                            keyboardType='numeric'
-                        />
+                        {renderInput(altura, setAltura, "Altura (cm)")}
+                        {renderInput(peso, setPeso, "Peso (Kg)")}
+                        {renderInput(ombros, setOmbros, "Ombros (cm)")}
+                        {renderInput(peito, setPeito, "Peito")}
+                        {renderInput(antebraco, setAntebraco, "Antebraço (cm)")}
+                        {renderInput(braco, setBraco, "Braço (cm)")}
+                        {renderInput(cintura, setCintura, "Cintura (cm)")}
+                        {renderInput(quadril, setQuadril, "Quadril (cm)")}
+                        {renderInput(perna, setPerna, "Perna (cm)")}
+                        {renderInput(panturrilha, setPanturrilha, "Panturrilha (cm)")}
                         <Pressable style={style.editButton(isLightMode)} onPress={() => updateUser({ altura, peso, ombros, peito, antebraco, braco, cintura, quadril, perna, panturrilha }).then(() => navigation.goBack())}>
                             <Text style={style.editButtonText(isLightMode)}>Editar</Text>
                         </Pressable>
@@ -128,29 +67,28 @@ export default function EditarMedidas({ navigation }) {
 }
 
 const style = StyleSheet.create({
-    imgContainer:{
-        alignItems:'center',
-        position:'relative',
-        height:100,
-        width:100
-    },
-    imgProfile:{
-        height:100,
-        width:100,
-    },
-    pencil:{
-        position:'absolute',
-        right:5,
-        bottom:2
-    },
     inputsContainer:{
         width:'100%',
         paddingHorizontal: 40,
         gap:20
     },
-    sexoInput:(isLightMode,sexo) => ({
-        color: sexo == '' ? grays.gray5 : isLightMode ? 'black' : 'white' 
+    floatingLabel: (value) => ({
+        position: 'absolute',
+        left: 0,
+        color: grays.gray5,
+        fontSize: value ? 12 : 16,
+        backgroundColor: 'transparent',
+        zIndex: 1,
+        transition: 'all 0.3s',
+        bottom: value ? 35 : 10 , 
+        left: value ? 20 : 40
     }),
+    inputContainer: {
+        height:60,
+        //backgroundColor:'red',
+        position: 'relative',
+        justifyContent:'flex-end'
+    },
     editButton: (isLightMode) => ({
         alignItems:'center',
         justifyContent:'center',
