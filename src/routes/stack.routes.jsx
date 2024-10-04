@@ -6,12 +6,10 @@ import Home from '../screens/Home';
 import Perfil from '../screens/Perfil';
 import Planejamento from '../screens/Planejamento';
 import Treino from '../screens/Treino';
-import Exercicio from '../screens/Exercicio'
-import Treinamento from '../screens/Treinamento'
-import Questionario from '../screens/Questionario';
 import EditarPerfil from '../screens/EditarPerfil'
 import EditarMedidas from '../screens/EditarMedidas'
 import Notifications from '../screens/Notifications';
+import ExerciciosExplorar from '../screens/ExerciciosExplorar';
 
 const HomeStack = createNativeStackNavigator();
 export function HomeStackScreen() {
@@ -41,8 +39,8 @@ export function ExplorarStackScreen() {
                 name="Explorar"
                 component={Explorar} />
             <ExplorarStack.Screen
-                name="Treino"
-                component={Treino} />
+                name="ExerciciosExplorar"
+                component={ExerciciosExplorar} />
         </ExplorarStack.Navigator>
     );
 }

@@ -1,6 +1,6 @@
 import TabExercicios from './tabexercicios.js';
 
-class Treino {
+export default class Treino { 
     // Var's objetivo: tabExercicios
     constructor(data = null) {
       this.data = data; // Dia, mês e ano do treino
@@ -12,5 +12,3 @@ class Treino {
       this.tabExercicios = [new TabExercicios("WarmUp"), new TabExercicios("Core"), new TabExercicios("Resistência"), new TabExercicios("Cardio")]; // Seções da folha de treino
     }
 }
-  
-export default Treino

@@ -1,6 +1,6 @@
 import PlanoTreino from './plano_treino.js'
 
-class Usuario {
+export default class Usuario {
   // Var's objetivo: planoTreino
   constructor() {
     //Cadastradas
@@ -19,6 +19,3 @@ class Usuario {
   }
 
 }
-
-export default Usuario 
-  

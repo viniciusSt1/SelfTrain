@@ -1,67 +1,105 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, Pressable, StyleSheet, ScrollView, useColorScheme } from "react-native";
+import React, { useState, useEffect, useContext } from "react";
+import { View, Text, Pressable, StyleSheet, ScrollView, TextInput, useColorScheme } from "react-native";
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from "../styles/globalStyles";
 import { colors, grays } from "../styles/globalStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useFocusEffect } from "@react-navigation/native";
+import UserContext from "../contexts/UserContext";
+import { binding } from "../IE/binding";
+import { traceValues } from "../IE/ie";
 
 export default function Questionario({ navigation }) {
-    /*
-    useFocusEffect( //executar uma função sempre que a tela ganhar foco
-        React.useCallback(() => {
-            const hideTabBar = () => {
-                navigation.getParent()?.setOptions({ tabBarStyle: { display: 'none' } });
-            };
-    
-            hideTabBar();
-    
-            return () => {
-                navigation.getParent()?.setOptions({ tabBarStyle: true });
-            };
-        }, []) // Reexecutar quando uma variaevl dentro de [] executar
-    );*/
-
     const isLightMode = useColorScheme() === 'light';
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState([]);
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [birthDate, setBirthDate] = useState(new Date());
+    const { user, updateUser } = useContext(UserContext);
+
+    const diasDaSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+
+    function calcularIdade(dataNascimento) {
+        const hoje = new Date();
+        let idade = hoje.getFullYear() - dataNascimento.getFullYear();
+        const mes = hoje.getMonth() - dataNascimento.getMonth();
+
+        if (mes < 0 || (mes === 0 && hoje.getDate() < dataNascimento.getDate())) {
+            idade--;
+        }
+
+        return idade;
+    }
+
+    function IA() {
+        const idade = calcularIdade(new Date(answers[0]));
+
+        const disponibilidade = answers[1].map(dia => diasDaSemana.indexOf(dia)).sort();
+
+        const objetivoMap = {
+            'Emagrecimento': 'emagrecimento',
+            'Hipertrofia': 'hipertrofia',
+            'Prática esportiva': 'esporte'
+        }
+        const objetivo = objetivoMap[answers[2][0]]
+
+        const nivelMap = {
+            "Pouco experiente": 1,
+            "Intermediário": 2,
+            "Muito experiente": 3
+        };
+
+        const nivel = nivelMap[answers[3][0]];
+
+        binding["Usuario.idade"] = idade
+        binding["Usuario.objetivo"] = objetivo
+        binding["Usuario.nivel"] = nivel
+        binding["Usuario.disponibilidade"] = disponibilidade
+
+        traceValues('Usuario');
+        var treinos = binding["Usuario.planoTreino.treinos"];
+
+        updateUser({ treinos }).then(() => {
+            navigation.goBack()
+        });
+    }
 
     const questions = [
         {
-            title: "Quantos anos você tem?",
-            options: [
-                { text: "Menos de 18", icon: <FontAwesome name="child" size={20} color="#333333" /> },
-                { text: "18-24", icon: <FontAwesome name="user" size={20} color="#333333" /> },
-                { text: "25-34", icon: <FontAwesome name="user" size={20} color="#333333" /> },
-                { text: "35-44", icon: <FontAwesome name="user" size={20} color="#333333" /> },
-                { text: "45+", icon: <FontAwesome name="user" size={20} color="#333333" /> }
-            ],
-            multiple: false,
-        },
-        {
-            title: "Qual é o seu nível de atividade física?",
-            options: [
-                { text: "Sedentário", icon: null },
-                { text: "Leve", icon: null },
-                { text: "Moderado", icon: null },
-                { text: "Intenso", icon: null }
-            ],
-            multiple: false,
+            title: "Qual é a sua data de nascimento?",
+            isDateQuestion: true,
         },
         {
             title: "Quais dias da semana você está disponível?",
             options: [
-                { text: "Segunda", icon: null },
-                { text: "Terça", icon: null },
-                { text: "Quarta", icon: null },
-                { text: "Quinta", icon: null },
-                { text: "Sexta", icon: null },
-                { text: "Sábado", icon: null },
-                { text: "Domingo", icon: null }
+                { text: "Segunda" },
+                { text: "Terça" },
+                { text: "Quarta" },
+                { text: "Quinta" },
+                { text: "Sexta" },
+                { text: "Sábado" },
+                { text: "Domingo" }
             ],
             multiple: true,
-        }
-        // ...
+        },
+        {
+            title: "Qual é o seu principal objetivo com musculação?",
+            options: [
+                { text: "Emagrecimento" },
+                { text: "Hipertrofia" },
+                { text: "Prática esportiva" }
+            ],
+            multiple: false,
+        },
+        {
+            title: "Qual a sua experiência com musculação?",
+            options: [
+                { text: "Pouco experiente" },
+                { text: "Intermediário" },
+                { text: "Muito experiente" }
+            ],
+            multiple: false,
+        },
     ];
 
     const totalQuestions = questions.length;
@@ -75,10 +113,8 @@ export default function Questionario({ navigation }) {
             }
             const optionIndex = updatedAnswers[currentQuestionIndex].indexOf(option.text);
             if (optionIndex > -1) {
-                // Remove a opção se já estiver selecionada
                 updatedAnswers[currentQuestionIndex].splice(optionIndex, 1);
             } else {
-                // Adiciona a opção se ainda não estiver selecionada
                 updatedAnswers[currentQuestionIndex].push(option.text);
             }
         } else {
@@ -88,19 +124,23 @@ export default function Questionario({ navigation }) {
     };
 
     const handleNextQuestion = () => {
-        if (currentQuestionIndex < totalQuestions - 1) 
+        if (questions[currentQuestionIndex].isDateQuestion) {
+            const updatedAnswers = [...answers];
+            updatedAnswers[currentQuestionIndex] = birthDate.toISOString(); // Salvando a data no formato ISO
+            setAnswers(updatedAnswers);
+        }
+
+        if (currentQuestionIndex < totalQuestions - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
-        else{
-            console.log("Questionário finalizado");
-            console.log(answers)
+        } else {
+            IA();
         }
     };
 
-    const handlePreviousQuestion = () => {
-        if (currentQuestionIndex > 0) 
-            setCurrentQuestionIndex(currentQuestionIndex - 1);
-        else
-            navigation.navigate('HomeTab')
+    const handleDateChange = (event, selectedDate) => {
+        const currentDate = selectedDate || birthDate;
+        setShowDatePicker(false);
+        setBirthDate(currentDate);
     };
 
     return (
@@ -111,43 +151,61 @@ export default function Questionario({ navigation }) {
             <Text style={style.questionTitle(isLightMode)}>
                 {questions[currentQuestionIndex].title}
             </Text>
-            <ScrollView>
-                {questions[currentQuestionIndex].options.map((option, index) => (
-                    <Pressable
-                        key={index}
-                        style={[
-                            style.optionButton(isLightMode),
-                            answers[currentQuestionIndex] && answers[currentQuestionIndex].includes(option.text)
-                                ? style.selectedOption(isLightMode)
-                                : null
-                        ]}
-                        onPress={() => handleAnswer(option)}
-                    >
-                        <Text style={style.optionText(isLightMode, answers[currentQuestionIndex] && answers[currentQuestionIndex].includes(option.text))}>{option.text}</Text>
-                        {option.icon}
+
+            {questions[currentQuestionIndex].isDateQuestion ? (
+                <View style={style.dateContainer}>
+                    <Pressable onPress={() => setShowDatePicker(true)} style={style.dateInput(isLightMode)}>
+                        <Text style={style.dateBirthdayText(isLightMode)}>
+                            {birthDate.toLocaleDateString()}
+                        </Text>
                     </Pressable>
-                ))}
-            </ScrollView>
+                    {showDatePicker && (
+                        <DateTimePicker
+                            value={birthDate}
+                            mode="date"
+                            display="default"
+                            onChange={handleDateChange}
+                        />
+                    )}
+                </View>
+            ) : (
+                <ScrollView>
+                    {questions[currentQuestionIndex].options.map((option, index) => (
+                        <Pressable
+                            key={index}
+                            style={[
+                                style.optionButton(isLightMode),
+                                answers[currentQuestionIndex] && answers[currentQuestionIndex].includes(option.text)
+                                    ? style.selectedOption(isLightMode)
+                                    : null
+                            ]}
+                            onPress={() => handleAnswer(option)}
+                        >
+                            <Text style={style.optionText(isLightMode, answers[currentQuestionIndex] && answers[currentQuestionIndex].includes(option.text))}>
+                                {option.text}
+                            </Text>
+                        </Pressable>
+                    ))}
+                </ScrollView>
+            )}
 
             <View style={style.buttonContainer}>
                 <Pressable
                     style={style.backButton(isLightMode)}
-                    onPress={handlePreviousQuestion}
+                    onPress={() => currentQuestionIndex === 0 ? navigation.goBack() : setCurrentQuestionIndex(currentQuestionIndex - 1)}
                 >
-                    <View style={style.backButtonIcon}> 
-                        <MaterialIcons size={45} color="white" name="keyboard-backspace" /> 
+                    <View style={style.backButtonIcon}>
+                        <MaterialIcons size={45} color="white" name="keyboard-backspace" />
                     </View>
                 </Pressable>
                 <Pressable
-                    style={style.continueButton(isLightMode, answers[currentQuestionIndex] && answers[currentQuestionIndex].length > 0)}
+                    style={style.continueButton(isLightMode, true)}
                     onPress={handleNextQuestion}
                 >
-                    <Text style={style.continueButtonText(isLightMode, answers[currentQuestionIndex] && answers[currentQuestionIndex].length > 0)}>Continuar</Text>
+                    <Text style={style.continueButtonText(isLightMode, true)}>Continuar</Text>
                 </Pressable>
             </View>
         </SafeAreaView>
-
-
     );
 }
 
@@ -156,7 +214,7 @@ const style = StyleSheet.create({
         height: 10,
         backgroundColor: isLightMode ? grays.gray2 : grays.gray10,
         borderRadius: 10,
-        overflow: 'hidden'
+        overflow: 'hidden',
     }),
     progressBar: (isLightMode, progress) => ({
         height: "100%",
@@ -169,6 +227,11 @@ const style = StyleSheet.create({
         textAlign: "center",
         color: isLightMode ? 'black' : 'white',
     }),
+    dateBirthdayText: (isLightMode) => ({
+        color: isLightMode ? 'black' : 'white',
+        fontSize: 20,
+        fontFamily: "Tauri",
+    }),
     optionButton: (isLightMode) => ({
         flexDirection: "row",
         alignItems: "center",
@@ -178,14 +241,10 @@ const style = StyleSheet.create({
         borderRadius: 35,
         backgroundColor: isLightMode ? 'white' : grays.gray7,
         marginBottom: 20,
-        gap:20
     }),
     selectedOption: (isLightMode) => ({
         backgroundColor: isLightMode ? colors.primary9 : colors.primary1,
     }),
-    iconStyle: {
-        marginRight: 10,
-    },
     optionText: (isLightMode, selected) => ({
         fontSize: 20,
         fontFamily: "Tauri",
@@ -195,29 +254,42 @@ const style = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "flex-end",
-        gap:10
     },
     backButton: (isLightMode) => ({
         borderRadius: 8,
         backgroundColor: colors.secondary3,
         flex: 1,
-        height:"100%",
+        height: "100%",
     }),
     backButtonIcon: {
-        justifyContent:'center',
-        alignItems:"center",
-        flex:1
+        justifyContent: 'center',
+        alignItems: "center",
+        flex: 1,
     },
     continueButton: (isLightMode, selection) => ({
-        padding: 10,
-        borderRadius: 8,
-        backgroundColor: selection ? (isLightMode ? colors.primary2 : colors.primary1) : grays.gray10 ,
-        flex: 3,
+        padding: 15,
+        borderRadius: 10,
+        backgroundColor: selection ? (isLightMode ? colors.primary3 : colors.primary1) : colors.disabled,
+        justifyContent: "center",
+        alignItems: "center",
+        flex: 5,
+        marginLeft: 10,
     }),
     continueButtonText: (isLightMode, selection) => ({
-        color: isLightMode ? "white" : selection ? "black" : "white",
         fontSize: 20,
-        textAlign: "center",
-        fontFamily: "Tauri"
+        fontFamily: "Outfit",
+        color: selection ? (isLightMode ? colors.textPrimaryLight : colors.textPrimaryDark) : colors.disabledText,
     }),
+    dateContainer: {
+        justifyContent: 'center',
+        //alignItems: 'center',
+        flex: 1,
+    },
+    dateInput: (isLightMode) => ({
+        backgroundColor: isLightMode ? 'white' : grays.gray7,
+        borderRadius: 10,
+        padding: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    })
 });

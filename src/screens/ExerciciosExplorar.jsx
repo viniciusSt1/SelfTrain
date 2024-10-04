@@ -5,60 +5,31 @@ import styles, { colors, grays } from '../styles/globalStyles';
 import HeaderBack from '../components/HeaderBack';
 import { requireIcon } from '../utils/agrupamentos';
 
-export default function Treino({ route, navigation }) {
-    const { titulo, treino, startButton } = route.params;
+export default function ExerciciosExplorar({ route, navigation }) {
+    const { exercicios, agrupamento } = route.params;
     const isLightMode = useColorScheme() === 'light';
-
-    //console.log(treino)
-
-    const renderSubHeader = () => {
-        const elements = [];
-        treino.agrupMusc.forEach((agrupamento, index) => {
-            elements.push(
-                <Image key={`image-${index}`} source={requireIcon(agrupamento)} style={style.iconImage} />
-            );
-            if (index < treino.agrupMusc.length - 1) {
-                elements.push(
-                    <Text key={`plus-${index}`} style={style.plusText}>+</Text>
-                );
-            }
-        });
-        return elements;
-    };
 
     return (
         <>
             <ScrollView style={style.scrollView(isLightMode)}>
                 <SafeAreaView style={styles.screen}>
-                    <HeaderBack titulo={titulo} navigation={navigation} />
+                    <HeaderBack titulo={agrupamento} navigation={navigation} />
 
                     <View style={style.subHeader}>
-                        {renderSubHeader()}
+                        <Image source={requireIcon(agrupamento)} style={style.iconImage} />
                     </View>
 
-                    {treino.tabExercicios.map((tabExercicio, index) => (
-                        <View style={style.exercisesContainer} key={index}>
-                            {tabExercicio.nomeExercicios.map((nomeExercicio, idx) => (
-                                <View style={style.exercicioBox(isLightMode)} key={idx}>
-                                    <Image
-                                        source={isLightMode ? require('../assets/icons/exercicio-light.png') : require('../assets/icons/exercicio-dark.png')}
-                                        style={style.exercicioIcon} />
-                                    <Text style={style.exerciseText(isLightMode)}>{nomeExercicio}</Text>
-                                </View>
-                            ))}
+                    {exercicios.map((exercicio, index) => (
+                        <View style={style.exercicioBox(isLightMode)} key={index}>
+                            <Image
+                                source={isLightMode ? require('../assets/icons/exercicio-light.png') : require('../assets/icons/exercicio-dark.png')}
+                                style={style.exercicioIcon} />
+                            <Text style={style.exerciseText(isLightMode)}>{exercicio.nome}</Text>
                         </View>
                     ))}
 
                 </SafeAreaView>
             </ScrollView>
-
-            {!startButton && (
-                <View style={style.buttonSpace(isLightMode)}>
-                    <Pressable style={style.comecarTreinoButton(isLightMode)} onPress={() => navigation.getParent().navigate('TreinamentoTab', { treino: treino })}>
-                        <Text style={style.comecarTreinoText(isLightMode)}>Iniciar Treino</Text>
-                    </Pressable>
-                </View>
-            )}
         </>
     );
 }
@@ -90,7 +61,6 @@ const style = StyleSheet.create({
     }),
     exercisesContainer: {
         gap: 20,
-        
     },
     exercicioBox: (isLightMode) => ({
         flexDirection: "row",

@@ -53,7 +53,7 @@ export default function Login({ navigation }) {
                     Alert.alert('Erro de Login', 'Operação não permitida. Verifique as configurações do Firebase.');
                     break;
                 default:
-                    Alert.alert('Erro de Login', 'Ocorreu um erro desconhecido. Por favor, tente novamente.');
+                    Alert.alert('Erro de Login', 'Ocorreu um erro desconhecido. Por favor, tente novamente.', error);
                     break;
             }
         });
