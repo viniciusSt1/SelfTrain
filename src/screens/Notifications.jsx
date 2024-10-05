@@ -22,25 +22,24 @@ const storage = new MMKV();
 export default function NotificationSettings({ navigation }) {
     const isLightMode = useColorScheme() === 'light';
 
-    // estados para lembrete de hidratação
+    // Estados para lembrete de hidratação
     const [isWaterNotificationEnabled, setWaterNotificationEnabled] = useState(false);
-    const [waterInterval, setWaterInterval] = useState(2); // default 2 hours
+    const [waterInterval, setWaterInterval] = useState(2); // padrão de 2 horas
 
-    // estados para lembrete de treino
+    // Estados para lembrete de treino
     const [isWorkoutNotificationEnabled, setWorkoutNotificationEnabled] = useState(false);
     const [workoutReminderTime, setWorkoutReminderTime] = useState(new Date());
     const [showTimePicker, setShowTimePicker] = useState(false);
 
-    // estados para recebimento de emails
+    // Estado para recebimento de e-mails
     const [isEmailsNotificationEnabled, setIsEmailsNotificationEnabled] = useState(false);
-    
 
     // Pedir permissão para notificações
     useEffect(() => {
         const requestPermissions = async () => {
             const { status } = await Notifications.requestPermissionsAsync();
             if (status !== 'granted') {
-                console.log('Permission for notifications not granted');
+                console.log('Permissão para notificações não concedida');
             }
         };
         requestPermissions();
@@ -54,7 +53,7 @@ export default function NotificationSettings({ navigation }) {
             const waterIntervalStored = storage.getNumber('waterInterval');
             const workoutTimeStored = storage.getString('workoutReminderTime');
             const emailStored = storage.getBoolean('emailStored');
-            
+
             if (waterEnabled !== null) setWaterNotificationEnabled(waterEnabled);
             if (workoutEnabled !== null) setWorkoutNotificationEnabled(workoutEnabled);
             if (waterIntervalStored !== null) setWaterInterval(waterIntervalStored);
@@ -71,30 +70,47 @@ export default function NotificationSettings({ navigation }) {
         storage.set('isWorkoutNotificationEnabled', isWorkoutNotificationEnabled);
         storage.set('waterInterval', waterInterval);
         storage.set('workoutReminderTime', workoutReminderTime.toString());
-        storage.set('emailStored', isEmailsNotificationEnabled)
+        storage.set('emailStored', isEmailsNotificationEnabled);
     }, [isWaterNotificationEnabled, isWorkoutNotificationEnabled, waterInterval, workoutReminderTime, isEmailsNotificationEnabled]);
 
+    // Efeito para agendar notificações de hidratação
     useEffect(() => {
-        if (isWaterNotificationEnabled) {
-            scheduleWaterNotifications();
-        }
+        const handleWaterNotifications = async () => {
+            const waterNotifications = await Notifications.getAllScheduledNotificationsAsync();
+            waterNotifications.forEach(notification => {
+                if (notification.content.title === "Hora de beber água") {
+                    Notifications.cancelScheduledNotificationAsync(notification.identifier);
+                }
+            });
+
+            if (isWaterNotificationEnabled) {
+                scheduleWaterNotifications();
+            }
+        };
+
+        handleWaterNotifications(); // Chama a função async dentro do useEffect
     }, [isWaterNotificationEnabled, waterInterval]);
 
+    // Efeito para agendar notificações de treino
     useEffect(() => {
-        if (isWorkoutNotificationEnabled) {
-            scheduleWorkoutNotifications();
-        }
+        const handleWorkoutNotifications = async () => {
+            const workoutNotifications = await Notifications.getAllScheduledNotificationsAsync();
+            workoutNotifications.forEach(notification => {
+                if (notification.content.title === "Lembrete de treino") {
+                    Notifications.cancelScheduledNotificationAsync(notification.identifier);
+                }
+            });
+
+            if (isWorkoutNotificationEnabled) {
+                scheduleWorkoutNotifications();
+            }
+        };
+
+        handleWorkoutNotifications(); // Chama a função async dentro do useEffect
     }, [isWorkoutNotificationEnabled, workoutReminderTime]);
 
+    // Função para agendar notificações de hidratação
     const scheduleWaterNotifications = async () => {
-        // Cancelar notificações de água usando um identificador específico
-        const waterNotifications = await Notifications.getAllScheduledNotificationsAsync();
-        waterNotifications.forEach(notification => {
-            if (notification.content.title === "Hora de beber água") {
-                Notifications.cancelScheduledNotificationAsync(notification.identifier);
-            }
-        });
-
         for (let i = 0; i < 24; i += waterInterval) {
             await Notifications.scheduleNotificationAsync({
                 content: {
@@ -110,14 +126,8 @@ export default function NotificationSettings({ navigation }) {
         }
     };
 
+    // Função para agendar notificações de treino
     const scheduleWorkoutNotifications = async () => {
-        const workoutNotifications = await Notifications.getAllScheduledNotificationsAsync();
-        workoutNotifications.forEach(notification => {
-            if (notification.content.title === "Lembrete de treino") {
-                Notifications.cancelScheduledNotificationAsync(notification.identifier);
-            }
-        });
-
         await Notifications.scheduleNotificationAsync({
             content: {
                 title: "Lembrete de treino",

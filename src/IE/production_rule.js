@@ -1,6 +1,6 @@
 import {binding} from './binding.js'
 import Treino from './treino.js'
-import {exercicios} from './exercicios.js'
+import {exercicios} from './exercicios.js'  //importar do banco de dados
 
 class Regra {
     constructor() {

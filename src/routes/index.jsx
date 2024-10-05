@@ -13,9 +13,11 @@ import Cadastro from '../screens/Cadastro'
 import TabRoutes from './tab.routes';
 import { useColorScheme } from 'react-native';
 
+import LoadingScreen from '../screens/LoadingScreen';
+
 const InicioStack = createNativeStackNavigator();
 export default function Routes() {
-    const { user } = useContext(UserContext)
+    const { user, loading } = useContext(UserContext)
     const isLightMode = useColorScheme() === 'light'
 
     // Configurando fontes do aplicativo
@@ -38,7 +40,7 @@ export default function Routes() {
     if (!loaded && !error)
         return null;
 
-    return user ? (
+    return loading ? <LoadingScreen/> : user ? (
         <>
             <StatusBar
                 barStyle={isLightMode ? 'dark-content' : 'light-content'}

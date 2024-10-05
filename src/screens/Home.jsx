@@ -12,7 +12,7 @@ export default function Home({ route, navigation }) {
     const isLightMode = useColorScheme() === "light"
 
     // navigation.getParent().navigate('ExplorarTab') navegar para outra tabBar
-
+    
     const { user } = useContext(UserContext)
 
     let data_atual = new Date()
@@ -85,8 +85,11 @@ export default function Home({ route, navigation }) {
                             const dataTreino = treino.data; // Mantém como objeto Date
                             return { ...treino, originalIndex, dataTreino }; // Inclui o índice original e a data Date
                         })
-                        .filter(treino => treino.dataTreino.getTime() >= new Date().getTime()) // Compara diretamente os timestamps
-                        .slice(0, 5) // Pega os 5 primeiros treinos
+                        .filter(treino => {
+                            const amanha = new Date(data_atual.getFullYear(), data_atual.getMonth(), data_atual.getDate() + 1, 0, 0, 0, 0);
+                            return treino.dataTreino.getTime() >= amanha.getTime();
+                        })
+                        .slice(0, 5) // Pega os 5 primeiros treinos mais próximos
                         .map((treino, index) => {
                             const diaSemana = getNomeDoDia(treino.dataTreino); // Obtém o nome do dia da semana dinamicamente
 
@@ -99,18 +102,17 @@ export default function Home({ route, navigation }) {
                                     data={treino.dataTreino.toLocaleDateString('pt-BR')} // Formato dd/mm/yyyy
                                     dia={diaSemana} // Nome do dia da semana
                                     isLightMode={isLightMode}
-                                    onPress={() => navigation.navigate("Treino",
-                                        {
-                                            titulo: treino.dataTreino.toLocaleDateString('pt-BR'),
-                                            treino: {
-                                                ...treino,
-                                                dataTreino: treino.dataTreino.toISOString() // Converte dataTreino para string ISO
-                                            }
+                                    onPress={() => navigation.navigate("Treino", {
+                                        titulo: treino.dataTreino.toLocaleDateString('pt-BR'),
+                                        treino: {
+                                            ...treino,
+                                            dataTreino: treino.dataTreino.toISOString() // Converte dataTreino para string ISO
                                         }
-                                    )}
+                                    })}
                                 />
                             );
                         })}
+
 
                     {/*<Text>Montar outro planejamento</Text>*/}
                 </View>

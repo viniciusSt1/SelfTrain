@@ -1,4 +1,4 @@
-class TabExercicios {
+export default class TabExercicios {
     // Var's objetivo: idExercicios
     constructor(tipo) {
       this.idExercicios = [] // Qual o exercício
@@ -13,5 +13,3 @@ class TabExercicios {
     }
   
   }
-
-export default TabExercicios

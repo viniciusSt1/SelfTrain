@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, Pressable, StyleSheet, ScrollView, TextInput, useColorScheme } from "react-native";
+import { View, Text, Pressable, StyleSheet, ScrollView, ActivityIndicator, useColorScheme, Alert } from "react-native";
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import styles from "../styles/globalStyles";
@@ -15,7 +15,8 @@ export default function Questionario({ navigation }) {
     const [answers, setAnswers] = useState([]);
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [birthDate, setBirthDate] = useState(new Date());
-    const { user, updateUser } = useContext(UserContext);
+    const { updateUser } = useContext(UserContext);
+    const [loading, setLoading] = useState(false)
 
     const diasDaSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
 
@@ -32,6 +33,8 @@ export default function Questionario({ navigation }) {
     }
 
     function IA() {
+        setLoading(true)
+
         const idade = calcularIdade(new Date(answers[0]));
 
         const disponibilidade = answers[1].map(dia => diasDaSemana.indexOf(dia)).sort();
@@ -61,6 +64,7 @@ export default function Questionario({ navigation }) {
 
         updateUser({ treinos }).then(() => {
             navigation.goBack()
+            setLoading(false)
         });
     }
 
@@ -133,7 +137,10 @@ export default function Questionario({ navigation }) {
         if (currentQuestionIndex < totalQuestions - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
-            IA();
+            if (answers.every(answer => answer.length !== 0) && answers.length === questions.length) 
+                IA(); // Chama a função somente se todas as respostas estiverem preenchidas
+            else
+                Alert.alert("Respostas incompletas", "Preencha todas as respostas para gerar seu planejamento")
         }
     };
 
@@ -202,7 +209,12 @@ export default function Questionario({ navigation }) {
                     style={style.continueButton(isLightMode, true)}
                     onPress={handleNextQuestion}
                 >
-                    <Text style={style.continueButtonText(isLightMode, true)}>Continuar</Text>
+                    <Text style={style.continueButtonText(isLightMode, true)}>{loading ? 
+                        <ActivityIndicator
+                            size={32}
+                            color={isLightMode ? 'white' : grays.gray6}
+                            style={styles.loadingIndicator}
+                        /> : currentQuestionIndex === questions.length - 1 ? 'Gerar planejamento' : 'Continuar' }</Text>
                 </Pressable>
             </View>
         </SafeAreaView>

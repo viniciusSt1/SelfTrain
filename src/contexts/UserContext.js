@@ -7,10 +7,12 @@ export const UserContext = createContext({});
 
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         const unsubscribe = auth().onAuthStateChanged(async _user => {  // Função ativada quando um usuário faz login/logout
             console.log("Carregando dados");
+            setLoading(true)
 
             if (_user) {
                 try {
@@ -43,13 +45,16 @@ export const UserProvider = ({ children }) => {
                     }
                 } catch (error) {
                     console.error("Erro ao buscar dados do usuário no Firestore: ", error);
+                } finally {
+                    setLoading(false); 
                 }
             } else {
                 setUser(null);
+                setLoading(false);
             }
         });
 
-        console.log("Dados carregados");
+        setLoading(false)
 
         return unsubscribe;
     }, []);
@@ -57,31 +62,30 @@ export const UserProvider = ({ children }) => {
 
     const updateUser = async (newData) => {
         if (!user) return;
-
+    
         try {
             // Atualize os dados no Firestore
-            firestore()
+            await firestore()
                 .collection('users')
                 .doc(user.uid)
-                .update(newData)
-
-            setUser(prevState => ({
-                ...prevState,
-                ...newData,
-                treinos: newData.treinos ? [...newData.treinos] : prevState.treinos
-            }));
-
-            console.log("usuario atualizado : ", user)
-
-
-            // Atualize o estado local com os novos dados 
+                .update(newData);
+    
+            setUser(prevState => {
+                const updatedUser = {
+                    ...prevState,
+                    ...newData,
+                };
+                //console.log("usuario atualizado : ", updatedUser);
+                return updatedUser;
+            });
+    
         } catch (error) {
             console.error("Erro ao atualizar dados do usuário no Firestore: ", error);
         }
     };
 
     return (
-        <UserContext.Provider value={{ user, updateUser, setUser }}>
+        <UserContext.Provider value={{ user, updateUser, setUser, loading, setLoading }}>
             {children}
         </UserContext.Provider>
     );

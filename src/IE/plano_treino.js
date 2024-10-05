@@ -1,6 +1,6 @@
 import Treino from './treino.js';
 
-class PlanoTreino {
+export default class PlanoTreino {
     // Var's objetivo: treinos
     constructor() {
       this.fases = []
@@ -9,5 +9,3 @@ class PlanoTreino {
     }
    
 }
-
-export default PlanoTreino

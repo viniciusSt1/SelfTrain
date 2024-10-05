@@ -43,7 +43,8 @@ export default function TabRoutes() {
                 component={HomeStackScreen}
                 options={{
                     tabBarLabel: "Home",
-                    tabBarIcon: ({ color }) => <Foundation name="home" size={30} color={color} />
+                    tabBarIcon: ({ color }) => <Foundation name="home" size={30} color={color} />,
+                    unmountOnBlur: true, 
                 }}
             />
             <Tab.Screen
@@ -51,7 +52,8 @@ export default function TabRoutes() {
                 component={ExplorarStackScreen}
                 options={{
                     tabBarLabel: 'Explorar',
-                    tabBarIcon: ({ color, size }) => <Ionicons name="compass" size={30} color={color} />
+                    tabBarIcon: ({ color, size }) => <Ionicons name="compass" size={30} color={color} />,
+                    unmountOnBlur: true, 
                 }}
             />
             <Tab.Screen
@@ -59,7 +61,8 @@ export default function TabRoutes() {
                 component={PlanejamentoStackScreen}
                 options={{
                     tabBarLabel: 'Planejamento',
-                    tabBarIcon: ({ color, size }) => <Foundation name="clipboard-pencil" size={30} color={color} />
+                    tabBarIcon: ({ color, size }) => <Foundation name="clipboard-pencil" size={30} color={color} />,
+                    unmountOnBlur: true, 
                 }}
             />
             <Tab.Screen
@@ -68,7 +71,7 @@ export default function TabRoutes() {
                 options={{
                     tabBarLabel: 'Corpo',
                     tabBarIcon: ({ color, size }) => <Ionicons name="body" size={30} color={color} />,
-
+                    unmountOnBlur: true, 
                 }}
             />
             <Tab.Screen
@@ -76,7 +79,8 @@ export default function TabRoutes() {
                 component={PerfilStackScreen}
                 options={{
                     tabBarLabel: 'Perfil',
-                    tabBarIcon: ({ color, size }) => <FontAwesome5 name="user-alt" size={size} color={color} />
+                    tabBarIcon: ({ color, size }) => <FontAwesome5 name="user-alt" size={size} color={color} />,
+                    unmountOnBlur: true, 
                 }}
             />
 
@@ -86,6 +90,7 @@ export default function TabRoutes() {
                 component={Questionario}
                 options={{
                     tabBarButton: () => null,
+                    unmountOnBlur: true, 
                 }}
             />
 
@@ -94,6 +99,7 @@ export default function TabRoutes() {
                 component={Treinamento}
                 options={{
                     tabBarButton: () => null,
+                    unmountOnBlur: true, 
                 }}
             />
         </Tab.Navigator>

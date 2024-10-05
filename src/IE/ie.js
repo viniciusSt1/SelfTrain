@@ -1,4 +1,3 @@
-
 import {askable_vars, objVars} from '../utils/IE_vars'
 import {regras} from './production_rule.js'
 import {binding} from './binding.js'
@@ -38,7 +37,7 @@ function traceValues(nameVariable) {
     }
 
     if(binding[nameVariable] != null){
-        console.log("Variável "+nameVariable+ " traçada!")
+        //console.log("Variável "+nameVariable+ " traçada!")
         tracedVars.push(nameVariable)
     } else {
         console.log("Variável "+nameVariable+ " não foi traçada propriamente")
