@@ -1,31 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Pressable, Text, TextInput, useColorScheme, View, StyleSheet, Alert, ActivityIndicator } from "react-native";
 import { MaterialIcons, FontAwesome5, AntDesign } from '@expo/vector-icons';
 import { SafeAreaView } from "react-native-safe-area-context";
 import styles, { colors, grays } from '../styles/globalStyles';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import UserContext from '../contexts/UserContext';
 
 export default function Login({ navigation }) {
     const isLightMode = useColorScheme() === 'light';
-    const [loading, setLoading] = useState(false)
+    const {loading, setLoading} = useContext(UserContext)
 
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
 
-    async function onGoogleButtonPress() {
-        // Check if your device supports Google Play
-        await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-        // Get the users ID token
-        const { idToken } = await GoogleSignin.signIn();
-      
-        // Create a Google credential with the token
-        const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-      
-        // Sign-in the user with the credential
-        return auth().signInWithCredential(googleCredential);
-    }
+    GoogleSignin.configure({
+        webClientId: '',
+    });
 
+    async function login_com_google() {
+        console.log("tentando logar com Google");
+        try {
+            const { idToken } = await GoogleSignin.signIn();
+            if (!idToken) {
+              throw new Error('Failed to obtain idToken');
+            }
+            const credential = firebase.auth.GoogleAuthProvider.credential(idToken);
+            await firebase.auth().signInWithCredential(credential);
+          } catch (error) {
+            console.error('Google Sign-In Error:', error);
+            alert(`Login failed: ${error.message}`);
+          }
+    }
+    
     function login_form() {
         if (email === '' || senha === '') {
             Alert.alert('Erro', 'Por favor, preencha todos os campos.');
@@ -38,12 +45,10 @@ export default function Login({ navigation }) {
             .signInWithEmailAndPassword(email, senha)
             .then(() => {
                 console.log('Login efetuado com sucesso');
-                setLoading(false);
-                //navigation.navigate("App")
+                //setLoading(false);
             })
             .catch(error => {
                 console.log('Erro ao tentar logar', error);
-                setLoading(false);
 
                 switch (error.code) {
                     case 'auth/invalid-email':
@@ -74,6 +79,8 @@ export default function Login({ navigation }) {
                         Alert.alert('Erro de Login', 'Ocorreu um erro desconhecido. Por favor, tente novamente.');
                         break;
                 }
+
+                setLoading(false);
             });
     }
 
@@ -115,7 +122,7 @@ export default function Login({ navigation }) {
                 <Text style={style.linkText(isLightMode)} onPress={() => navigation.navigate("Cadastro")}>Não tenho cadastro</Text>
                 <Text style={style.linkText(isLightMode)}>Esqueci minha senha</Text>
             </View>
-            <Pressable style={style.googleButton(isLightMode)}>
+            <Pressable style={style.googleButton(isLightMode)} onPress={() => login_com_google()}>
                 <AntDesign name="google" size={25} color={isLightMode ? 'white' : colors.primary9} />
                 <Text style={style.googleButtonText(isLightMode)}>Sign in with Google</Text>
             </Pressable>

@@ -64,8 +64,25 @@ export default function Perfil({ navigation }) {
                         try {
                             const currentUser = auth().currentUser;
                             if (currentUser) {
-                                await currentUser.delete();
+                                const treinosRef = firestore().collection('users').doc(currentUser.uid).collection('treinos');
+                                const medidasRef = firestore().collection('users').doc(currentUser.uid).collection('medidas');
+
+                                // Deletar documentos dentro da subcoleção "treinos"
+                                const treinosSnapshot = await treinosRef.get();
+                                const deleteTreinosPromises = treinosSnapshot.docs.map(doc => doc.ref.delete());
+                                await Promise.all(deleteTreinosPromises);
+
+                                // Deletar documentos dentro da subcoleção "medidas"
+                                const medidasSnapshot = await medidasRef.get();
+                                const deleteMedidasPromises = medidasSnapshot.docs.map(doc => doc.ref.delete());
+                                await Promise.all(deleteMedidasPromises);
+
+                                // Deletar o documento do usuário principal
                                 await firestore().collection('users').doc(currentUser.uid).delete();
+
+                                // Deletar autenticação do usuário
+                                await currentUser.delete();
+
                                 Alert.alert("Conta deletada", "Sua conta foi deletada com sucesso.");
                             }
                         } catch (error) {
@@ -74,7 +91,7 @@ export default function Perfil({ navigation }) {
                                     "Erro ao deletar conta",
                                     "Por razões de segurança, por favor, faça login novamente e tente excluir a conta."
                                 );
-                            } else 
+                            } else
                                 Alert.alert("Erro", "Ocorreu um erro ao deletar sua conta. Tente novamente mais tarde.");
                         }
                     }

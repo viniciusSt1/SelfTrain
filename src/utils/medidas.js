@@ -1,1 +1,1 @@
-export default ['Peso', 'Altura', 'Antebraço', 'Braço', 'Cintura', 'Ombros', 'Panturrilha', 'Peito', 'Perna', 'Pescoço','Quadril']
+export default ['Peso', 'Altura', 'Antebraço', 'Braço', 'Cintura', 'Ombros', 'Panturrilha', 'Peito', 'Perna','Quadril']

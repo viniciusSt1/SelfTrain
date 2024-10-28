@@ -15,7 +15,9 @@ const colors = {
 
 	secondary1: "#940000",
 	secondary2: "rgba(255,0,0,0.2)",
-	secondary3: "#F03030"
+	secondary3: "#F03030",
+
+	tertiary1: '#59EA35'
 }
 
 const grays = {

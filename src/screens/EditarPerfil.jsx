@@ -8,7 +8,7 @@ import UserContext from '../contexts/UserContext';
 
 export default function EditarPerfil({ navigation }) {
     const isLightMode = useColorScheme() === 'light';
-    const { user, updateUser } = useContext(UserContext);
+    const { user, updateUserProfile } = useContext(UserContext);
 
     const [nome, setNome] = useState(user.nome || '');
     const [email, setEmail] = useState(user.email || '');
@@ -62,7 +62,7 @@ export default function EditarPerfil({ navigation }) {
                             <Text style={style.sexoInput(isLightMode, sexo)}>{sexo === '' ? 'Sexo' : sexo}</Text>
                         </Pressable>
                         {renderInput(senha, setSenha, "Senha", 'default', true)}
-                        <Pressable style={style.editButton(isLightMode)} onPress={() => updateUser({ nome, email, idade, sexo }).then(() => navigation.goBack())}>
+                        <Pressable style={style.editButton(isLightMode)} onPress={() => updateUserProfile({ nome, email, idade, sexo }).then(() => navigation.goBack())}>
                             <Text style={style.editButtonText(isLightMode)}>Editar</Text>
                         </Pressable>
                     </View>

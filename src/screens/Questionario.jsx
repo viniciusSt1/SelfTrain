@@ -15,7 +15,7 @@ export default function Questionario({ navigation }) {
     const [answers, setAnswers] = useState([]);
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [birthDate, setBirthDate] = useState(new Date());
-    const { updateUser } = useContext(UserContext);
+    const { updateUserTraining } = useContext(UserContext);
     const [loading, setLoading] = useState(false)
 
     const diasDaSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
@@ -61,8 +61,9 @@ export default function Questionario({ navigation }) {
 
         traceValues('Usuario');
         var treinos = binding["Usuario.planoTreino.treinos"];
+        console.log(treinos)
 
-        updateUser({ treinos }).then(() => {
+        updateUserTraining(treinos).then(() => {
             navigation.goBack()
             setLoading(false)
         });

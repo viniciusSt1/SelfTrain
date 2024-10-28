@@ -1,35 +1,36 @@
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, useColorScheme } from 'react-native';
+import { View, Text, StyleSheet, useColorScheme, Alert } from 'react-native';
 import { grays } from '../styles/globalStyles';
 import UserContext from '../contexts/UserContext';
 
-export default function TabelaAnalise() {
+export default function TabelaAnalise({ imc, tmb, asc, percentualGordura, icE, icQ, valoresIdeais }) {
     const isLightMode = useColorScheme() === 'light';
-    const { user } = useContext(UserContext);
 
-    const alturaM = (user.altura || 0) / 100; // altura em metros
-    const imc = user.peso ? (user.peso / (alturaM * alturaM)).toFixed(2) : 'N/A';
-    const tmb = user.idade ? (
-        user.sexo === 'Masculino'
-            ? (88.362 + (13.397 * (user.peso || 0)) + (4.799 * (user.altura || 0)) - (5.677 * (user.idade || 0))).toFixed(2)
-            : (447.593 + (9.247 * (user.peso || 0)) + (3.098 * (user.altura || 0)) - (4.330 * (user.idade || 0))).toFixed(2)
-    ) : 'N/A';
-    const asc = user.peso && user.altura ? (0.20247 * Math.pow(user.altura || 0, 0.725) * Math.pow(user.peso || 0, 0.425)).toFixed(2) : 'N/A';
-    const percentualGordura = user.peso && user.altura && user.idade ? (
-        user.sexo === 'Masculino'
-            ? (0.407 * (user.peso || 0) + 0.267 * (user.altura || 0) - 19.2).toFixed(2)
-            : (0.252 * (user.peso || 0) + 0.473 * (user.altura || 0) - 48.3).toFixed(2)
-    ) : 'N/A';
-    const icE = user.cintura && user.altura ? (user.cintura / user.altura).toFixed(2) : 'N/A';
-    const icQ = user.cintura && user.quadril ? (user.cintura / user.quadril).toFixed(2) : 'N/A';
-
-    const valoresIdeais = {
-        imc: user.sexo === 'Masculino' ? '18.5 - 24.9' : '18.5 - 24.9',
-        tmb: user.sexo === 'Masculino' ? '1600 - 2000 kcal/dia' : '1400 - 1800 kcal/dia',
-        asc: '1.6 - 2.0 m²', // Geralmente, não varia entre sexos
-        percentualGordura: user.sexo === 'Masculino' ? '10% - 20%' : '20% - 30%',
-        icE: user.sexo === 'Masculino' ? '< 0.5' : '< 0.5',
-        icQ: user.sexo === 'Masculino' ? '< 0.9' : '< 0.8',
+    const handleAlertInfo = (indicator) => {
+        let message = '';
+        switch (indicator) {
+            case 'IMC':
+                message = 'O Índice de Massa Corporal (IMC) avalia se o peso está adequado em relação à altura.';
+                break;
+            case 'TMB':
+                message = 'A Taxa Metabólica Basal (TMB) é a quantidade mínima de energia (calorias) que o corpo precisa para funcionar em repouso.';
+                break;
+            case 'ASC':
+                message = 'A Área de Superfície Corporal (ASC) mede a área da pele, usada para dosagens de medicamentos e outras avaliações de saúde.';
+                break;
+            case 'Percentual de Gordura':
+                message = 'O percentual de gordura é a proporção de gordura corporal em relação ao peso total.';
+                break;
+            case 'IC/E':
+                message = 'O Índice Cintura-Estatura (IC/E) avalia a distribuição da gordura corporal em relação à altura.';
+                break;
+            case 'ICQ':
+                message = 'O Índice Cintura-Quadril (ICQ) avalia a distribuição da gordura corporal entre a cintura e o quadril.';
+                break;
+            default:
+                message = 'Indicador desconhecido.';
+        }
+        Alert.alert(indicator, message);
     };
 
     return (
@@ -40,32 +41,32 @@ export default function TabelaAnalise() {
                 <Text style={styles.tableCellHeader(isLightMode)}>Valor ideal</Text>
             </View>
             <View style={styles.tableRow}>
-                <Text style={styles.tableCell(isLightMode)}>IMC</Text>
+                <Text style={styles.tableCell(isLightMode)} onPress={() => handleAlertInfo('IMC')}>IMC</Text>
                 <Text style={styles.tableCell(isLightMode)}>{imc}</Text>
                 <Text style={styles.tableCell(isLightMode)}>{valoresIdeais.imc}</Text>
             </View>
             <View style={styles.tableRow}>
-                <Text style={styles.tableCell(isLightMode)}>TMB</Text>
+                <Text style={styles.tableCell(isLightMode)} onPress={() => handleAlertInfo('TMB')}>TMB</Text>
                 <Text style={styles.tableCell(isLightMode)}>{tmb}</Text>
                 <Text style={styles.tableCell(isLightMode)}>{valoresIdeais.tmb}</Text>
             </View>
             <View style={styles.tableRow}>
-                <Text style={styles.tableCell(isLightMode)}>ASC</Text>
+                <Text style={styles.tableCell(isLightMode)} onPress={() => handleAlertInfo('ASC')}>ASC</Text>
                 <Text style={styles.tableCell(isLightMode)}>{asc}</Text>
                 <Text style={styles.tableCell(isLightMode)}>{valoresIdeais.asc}</Text>
             </View>
             <View style={styles.tableRow}>
-                <Text style={styles.tableCell(isLightMode)}>Percentual de gordura</Text>
+                <Text style={styles.tableCell(isLightMode)} onPress={() => handleAlertInfo('Percentual de Gordura')}>Percentual de gordura</Text>
                 <Text style={styles.tableCell(isLightMode)}>{percentualGordura}</Text>
                 <Text style={styles.tableCell(isLightMode)}>{valoresIdeais.percentualGordura}</Text>
             </View>
             <View style={styles.tableRow}>
-                <Text style={styles.tableCell(isLightMode)}>IC/E</Text>
+                <Text style={styles.tableCell(isLightMode)} onPress={() => handleAlertInfo('IC/E')}>IC/E</Text>
                 <Text style={styles.tableCell(isLightMode)}>{icE}</Text>
                 <Text style={styles.tableCell(isLightMode)}>{valoresIdeais.icE}</Text>
             </View>
             <View style={styles.tableRow}>
-                <Text style={styles.tableCell(isLightMode)}>ICQ</Text>
+                <Text style={styles.tableCell(isLightMode)} onPress={() => handleAlertInfo('ICQ')}>ICQ</Text>
                 <Text style={styles.tableCell(isLightMode)}>{icQ}</Text>
                 <Text style={styles.tableCell(isLightMode)}>{valoresIdeais.icQ}</Text>
             </View>
@@ -79,7 +80,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: isLightMode ? grays.gray3 : grays.gray5,
         borderRadius: 4,
-        marginTop: 20,
     }),
     tableRowHeader: {
         flexDirection: 'row',

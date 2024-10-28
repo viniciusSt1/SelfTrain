@@ -7,18 +7,19 @@ import UserContext from '../contexts/UserContext';
 
 export default function EditarMedidas({ navigation }) {
     const isLightMode = useColorScheme() === 'light';
-    const { user, updateUser } = useContext(UserContext);
+    const { user, updateUserMeasurements } = useContext(UserContext);
+    //console.log(user.medidas)
 
-    const [altura, setAltura] = useState(user.altura || '');
-    const [peso, setPeso] = useState(user.peso || '');
-    const [ombros, setOmbros] = useState(user.ombros || '');
-    const [peito, setPeito] = useState(user.peito || '');
-    const [antebraco, setAntebraco] = useState(user.antebraco || '');
-    const [braco, setBraco] = useState(user.braco || '');
-    const [cintura, setCintura] = useState(user.cintura || '');
-    const [quadril, setQuadril] = useState(user.quadril || '');
-    const [perna, setPerna] = useState(user.perna || '');
-    const [panturrilha, setPanturrilha] = useState(user.panturrilha || '');
+    const [altura, setAltura] = useState(user.medidas.altura || '');
+    const [peso, setPeso] = useState(user.medidas.peso || '');
+    const [ombros, setOmbros] = useState(user.medidas.ombros || '');
+    const [peito, setPeito] = useState(user.medidas.peito || '');
+    const [antebraco, setAntebraco] = useState(user.medidas.antebraco || '');
+    const [braco, setBraco] = useState(user.medidas.braco || '');
+    const [cintura, setCintura] = useState(user.medidas.cintura || '');
+    const [quadril, setQuadril] = useState(user.medidas.quadril || '');
+    const [perna, setPerna] = useState(user.medidas.perna || '');
+    const [panturrilha, setPanturrilha] = useState(user.medidas.panturrilha || '');
 
     const renderInput = (value, setValue, placeholder) => {
         return (
@@ -49,14 +50,14 @@ export default function EditarMedidas({ navigation }) {
                         {renderInput(altura, setAltura, "Altura (cm)")}
                         {renderInput(peso, setPeso, "Peso (Kg)")}
                         {renderInput(ombros, setOmbros, "Ombros (cm)")}
-                        {renderInput(peito, setPeito, "Peito")}
+                        {renderInput(peito, setPeito, "Peito (cm)")}
                         {renderInput(antebraco, setAntebraco, "Antebraço (cm)")}
                         {renderInput(braco, setBraco, "Braço (cm)")}
                         {renderInput(cintura, setCintura, "Cintura (cm)")}
                         {renderInput(quadril, setQuadril, "Quadril (cm)")}
                         {renderInput(perna, setPerna, "Perna (cm)")}
                         {renderInput(panturrilha, setPanturrilha, "Panturrilha (cm)")}
-                        <Pressable style={style.editButton(isLightMode)} onPress={() => updateUser({ altura, peso, ombros, peito, antebraco, braco, cintura, quadril, perna, panturrilha }).then(() => navigation.goBack())}>
+                        <Pressable style={style.editButton(isLightMode)} onPress={() => updateUserMeasurements({ altura, peso, ombros, peito, antebraco, braco, cintura, quadril, perna, panturrilha }).then(() => navigation.goBack())}>
                             <Text style={style.editButtonText(isLightMode)}>Editar</Text>
                         </Pressable>
                     </View>

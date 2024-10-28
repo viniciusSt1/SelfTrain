@@ -1,7 +1,7 @@
 export default class Exercicio {
   constructor(idExerc = null, nome = null, tipoContagem = null, niveisOpt = [], dificuldade = null, tipo = null, tipoSubTreino = null, agrupMusc = []) {
     this.idExerc = idExerc;
-    this.nome = nome;
+    this.nome = nome; 
     this.tipoContagem = tipoContagem // time ou rep : Tempo ou repetições
     this.niveisOpt = niveisOpt; // Fases OPT mais recomendadas para o exercício ser utilizado
     this.dificuldade = dificuldade; // 1 a 3 (iniciante, intermediário, avançado) 

@@ -22,6 +22,7 @@ export default function Treinamento({ route }) {
                 repeticoes: tabexercicio.repeticoes[index],  // Repetições do exercício
                 series: tabexercicio.sets[index],  // Sets (agrupamento de repetições)
                 tempoDescanso: tabexercicio.tempoDescanso[index], // Tempo de descanso
+                tempoTotal: tabexercicio.tempoTotal[index],
                 intensidade: tabexercicio.intensidade[index],  // Intensidade
                 modTempoExec: tabexercicio.modTempoExec[index]  // Modulação de tempo de execução
             }
@@ -33,6 +34,7 @@ export default function Treinamento({ route }) {
             setCurrentExerciseIndex(currentExerciseIndex + 1);
         } else {
             alert('Você concluiu o treino!');
+            navigation.goBack()
         }
     };
 
@@ -41,7 +43,7 @@ export default function Treinamento({ route }) {
         setModalVisible(false);  // Fecha o modal após a seleção
     };
 
-    const { nome, repeticoes, agrupMusc, series, tipoContagem } = exercicios[currentExerciseIndex];
+    const { nome, repeticoes, agrupMusc, series, tipoContagem, tempoTotal } = exercicios[currentExerciseIndex];
     const totalExercises = exercicios.length;
     const currentExercise = currentExerciseIndex + 1;
 
@@ -82,7 +84,7 @@ export default function Treinamento({ route }) {
                 </View>
                 
                 <View style={style.blocks_exercices}>
-                    <Text style={style.repetitions(isLightMode)}>{repeticoes} {tipoContagem==='time' ? 'tempo' : 'repetições'}</Text>
+                    <Text style={style.repetitions(isLightMode)}>{tipoContagem ==='time' ? tempoTotal/series : repeticoes} {tipoContagem ==='time' ? 'segundos' : 'repetições'}</Text>
                     <Text style={style.repetitions(isLightMode)}>{series} séries</Text>
                 </View>
 
@@ -113,7 +115,7 @@ export default function Treinamento({ route }) {
                                     style={currentExerciseIndex === index ? style.currentExerciseItem(isLightMode) : style.exerciseItem}
                                 >
                                     <Text style={style.exerciseNameModal(isLightMode, currentExerciseIndex === index)}>{exercicio.nome}</Text>
-                                    <Text style={style.repetitionsModal(isLightMode, currentExerciseIndex === index)}>{exercicio.repeticoes} {exercicio.tipoContagem==='time' ? 'tempo' : 'repetições'}</Text>
+                                    <Text style={style.repetitionsModal(isLightMode, currentExerciseIndex === index)}>{exercicio.tipoContagem==='time' ? exercicio.tempoTotal/exercicio.series : exercicio.repeticoes} {exercicio.tipoContagem==='time' ? 'segundos' : 'repetições'}</Text>
                                     <Text style={style.repetitionsModal(isLightMode, currentExerciseIndex === index)}>{exercicio.series} series</Text>
                                     {currentExerciseIndex !== index && currentExerciseIndex !== index + 1 && index !== exercicios.length - 1 ? <View style={style.divisor}></View> : null}
                                 </Pressable>
