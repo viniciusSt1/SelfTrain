@@ -40,41 +40,48 @@ export default function Routes() {
     if (!loaded && !error)
         return null;
 
-    return loading ? <LoadingScreen/> : user ? (
+    return loading ?
         <>
             <StatusBar
                 barStyle={isLightMode ? 'dark-content' : 'light-content'}
                 style={styles.background(isLightMode)} />
-
-            <NavigationContainer>
-                <TabRoutes />
-            </NavigationContainer>
+            <LoadingScreen />
         </>
+        : user ? (
+            <>
+                <StatusBar
+                    barStyle={isLightMode ? 'dark-content' : 'light-content'}
+                    style={styles.background(isLightMode)} />
 
-    ) : (
-        <>
-            <StatusBar
-                barStyle={isLightMode ? 'dark-content' : 'light-content'}
-                style={styles.background(isLightMode)} />
-            <NavigationContainer>
-                <InicioStack.Navigator
-                    initialRouteName="InicioStack"
-                    screenOptions={{ headerShown: false }}
-                >
-                    <InicioStack.Screen
-                        name="InicioStack"
-                        component={Inicio}
-                    />
-                    <InicioStack.Screen
-                        name="Login"
-                        component={Login}
-                    />
-                    <InicioStack.Screen
-                        name="Cadastro"
-                        component={Cadastro}
-                    />
-                </InicioStack.Navigator >
-            </NavigationContainer>
-        </>
-    )
+                <NavigationContainer>
+                    <TabRoutes />
+                </NavigationContainer>
+            </>
+
+        ) : (
+            <>
+                <StatusBar
+                    barStyle={isLightMode ? 'dark-content' : 'light-content'}
+                    style={styles.background(isLightMode)} />
+                <NavigationContainer>
+                    <InicioStack.Navigator
+                        initialRouteName="InicioStack"
+                        screenOptions={{ headerShown: false }}
+                    >
+                        <InicioStack.Screen
+                            name="InicioStack"
+                            component={Inicio}
+                        />
+                        <InicioStack.Screen
+                            name="Login"
+                            component={Login}
+                        />
+                        <InicioStack.Screen
+                            name="Cadastro"
+                            component={Cadastro}
+                        />
+                    </InicioStack.Navigator >
+                </NavigationContainer>
+            </>
+        )
 }

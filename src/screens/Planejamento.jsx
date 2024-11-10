@@ -1,11 +1,34 @@
 import { Button, ScrollView, Text, useColorScheme, View, StyleSheet, Pressable } from "react-native";
 import styles, { colors, grays } from "../styles/globalStyles";
-import { Calendar } from "react-native-calendars";
+import { Calendar, LocaleConfig } from "react-native-calendars";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BoxTreinosDay from '../components/BoxTreinosDay';
 import UserContext from "../contexts/UserContext";
 import { useContext, useState } from "react";
 import { getNomeDoDia } from "../utils/function_datas";
+
+LocaleConfig.locales['br'] = {
+    monthNames: [
+        'Janeiro',
+        'Fevereiro',
+        'Março',
+        'Abril',
+        'Maio',
+        'Junho',
+        'Julho',
+        'Agosto',
+        'Setembro',
+        'Outubro',
+        'Novembro',
+        'Dezembro'
+    ],
+    monthNamesShort: ['Jan.', 'Fev.', 'Mar,', 'Abr.', 'Mai.', 'Jun.', 'Jul.', 'Ago.', 'Set.', 'Out.', 'Nov.', 'Dez.'],
+    dayNames: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'],
+    dayNamesShort: ['Dom.', 'Seg.', 'Ter.', 'Qua.', 'Qui.', 'Sex.', 'Sab.'],
+    today: "Hoje"
+};
+
+LocaleConfig.defaultLocale = 'br';
 
 export default function Planejamento({ navigation }) {
     const isLightMode = useColorScheme() === 'light';
@@ -86,7 +109,7 @@ export default function Planejamento({ navigation }) {
                                     const amanha = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + 1, 0, 0, 0, 0);
                                     return treino.dataTreino.getTime() >= amanha.getTime();
                                 })
-                                .slice(0, n) 
+                                .slice(0, n)
                                 .map((treino, index) => {
                                     const diaSemana = getNomeDoDia(treino.dataTreino); // Obtém o nome do dia da semana dinamicamente
 

@@ -64,8 +64,13 @@ export default function Perfil({ navigation }) {
                         try {
                             const currentUser = auth().currentUser;
                             if (currentUser) {
+                                // Deletar autenticação do usuário
+                                await currentUser.delete();
+
+                                // Referências para as subcoleções e o documento do usuário
                                 const treinosRef = firestore().collection('users').doc(currentUser.uid).collection('treinos');
                                 const medidasRef = firestore().collection('users').doc(currentUser.uid).collection('medidas');
+                                const userRef = firestore().collection('users').doc(currentUser.uid);
 
                                 // Deletar documentos dentro da subcoleção "treinos"
                                 const treinosSnapshot = await treinosRef.get();
@@ -78,10 +83,7 @@ export default function Perfil({ navigation }) {
                                 await Promise.all(deleteMedidasPromises);
 
                                 // Deletar o documento do usuário principal
-                                await firestore().collection('users').doc(currentUser.uid).delete();
-
-                                // Deletar autenticação do usuário
-                                await currentUser.delete();
+                                await userRef.delete();
 
                                 Alert.alert("Conta deletada", "Sua conta foi deletada com sucesso.");
                             }
@@ -91,14 +93,16 @@ export default function Perfil({ navigation }) {
                                     "Erro ao deletar conta",
                                     "Por razões de segurança, por favor, faça login novamente e tente excluir a conta."
                                 );
-                            } else
+                            } else {
                                 Alert.alert("Erro", "Ocorreu um erro ao deletar sua conta. Tente novamente mais tarde.");
+                            }
                         }
                     }
                 }
             ]
         );
     }
+
 
     async function att() {
         //user.nome='tucaaa'
@@ -142,6 +146,16 @@ export default function Perfil({ navigation }) {
                     <Pressable style={style.section(isLightMode)} onPress={() => auth().signOut()}>
                         <Text style={style.sectionText(isLightMode)}>Sair</Text>
                     </Pressable>
+                    <View style={style.creditos}>
+                        <Text style={style.creditosText}>Créditos</Text>
+                        <View style={style.line}></View>
+                        <View>
+                            <Text style={style.creditosText}>Vinicius Stefanes Mendes</Text>
+                            <Text style={style.creditosText}>Gustavo Camilo Ferreira</Text>
+                        </View>
+                        <View style={style.line}></View>
+                        <Text style={style.creditosText}>UFGD - Universidade Federal da Grande Dourados</Text>
+                    </View>
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -186,4 +200,22 @@ const style = StyleSheet.create({
         color: isLightMode ? 'black' : 'white',
         fontFamily: 'Rubik'
     }),
+    creditos: {
+        marginTop: 10,
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        gap: 8
+    },
+    line:{
+        borderColor:grays.gray5,
+        borderStyle:'solid',
+        borderBottomWidth:1,
+        width:25
+    },
+    creditosText:{
+        color: grays.gray5,
+        textAlign: 'center',
+        fontFamily: 'RobotoCondensed',
+    }
 });

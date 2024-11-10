@@ -47,7 +47,7 @@ export default function Questionario({ navigation }) {
         const objetivo = objetivoMap[answers[2][0]]
 
         const nivelMap = {
-            "Pouco experiente": 1,
+            //"Pouco experiente": 1,
             "Intermediário": 2,
             "Muito experiente": 3
         };

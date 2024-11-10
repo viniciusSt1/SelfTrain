@@ -72,9 +72,6 @@ export function CorpoStackScreen() {
             <CorpoStack.Screen
                 name="Corpo"
                 component={Corpo} />
-            <CorpoStack.Screen
-                name="EditarMedidas"
-                component={EditarMedidas} />
         </CorpoStack.Navigator>
     );
 }
